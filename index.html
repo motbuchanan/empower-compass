@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1b4965">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Empower Compass · Medina County</title>
+<style>
+:root{
+  --bg:#eef4f7; --card:#ffffff; --ink:#16232b; --muted:#5f7280;
+  --accent:#1b4965; --accent-ink:#eef6fa;
+  --gold:#2fbde8; --gold-ink:#0e2a38;
+  --line:#d8e4ea; --danger:#b3402e; --ok:#2e7d4f;
+  --shadow:0 1px 2px rgba(32,36,46,.05), 0 5px 16px rgba(32,36,46,.10);
+  --hl:rgba(255,255,255,.75);
+  --hgrad:linear-gradient(155deg,#226079 0%,#1b4965 55%,#143a4f 100%);
+}
+body.dark{
+  --bg:#0e1b22; --card:#15262e; --ink:#e2edf2; --muted:#8fa4af;
+  --accent:#2a6480; --accent-ink:#eef6fa;
+  --line:#24404c; --shadow:0 1px 2px rgba(0,0,0,.4), 0 7px 20px rgba(0,0,0,.42);
+  --hl:rgba(255,255,255,.06);
+  --hgrad:linear-gradient(155deg,#256077 0%,#1b4965 55%,#122f3e 100%);
+}
+/* gold surfaces keep dark ink in BOTH themes (hardcoded on-color) */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:Georgia,'Times New Roman',serif; background:var(--bg); color:var(--ink);
+  display:flex;flex-direction:column;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+header{
+  background:var(--hgrad); color:var(--accent-ink);
+  padding:calc(14px + env(safe-area-inset-top)) 16px 14px; display:flex; align-items:center; gap:12px;
+  position:relative; overflow:hidden;
+  border-bottom:2px solid rgba(47,189,232,.55);
+}
+header::before{content:'';position:absolute;right:-36px;top:-52px;width:150px;height:150px;border:2px solid rgba(255,255,255,.07);border-radius:50%;pointer-events:none}
+header::after{content:'';position:absolute;right:-6px;top:-22px;width:90px;height:90px;border:1.5px solid rgba(255,255,255,.06);border-radius:50%;pointer-events:none}
+header > *{position:relative;z-index:1}
+header svg{flex:0 0 34px}
+.h-title{font-size:20px;font-weight:bold;letter-spacing:.3px}
+.h-sub{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:12px;opacity:.85}
+.h-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.badge{
+  font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:11px;
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);
+  padding:3px 8px;border-radius:20px;cursor:pointer;user-select:none
+}
+.iconbtn{
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);color:var(--accent-ink);
+  width:34px;height:34px;border-radius:50%;font-size:16px;cursor:pointer;line-height:1
+}
+main{flex:1;overflow-y:auto;padding:16px 14px 92px;max-width:640px;width:100%;margin:0 auto}
+.panel{display:none}
+.panel.active{display:block}
+h2{font-size:15px;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);margin:20px 2px 10px;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-weight:600;display:flex;align-items:center;gap:10px}
+h2::after{content:'';flex:1;height:1px;background:linear-gradient(90deg, rgba(47,189,232,.55), transparent)}
+h2:first-child{margin-top:2px}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:14px 16px;margin-bottom:10px;
+  box-shadow:inset 0 1px 0 var(--hl), var(--shadow)
+}
+.hero{
+  background:var(--hgrad);color:var(--accent-ink);text-align:center;
+  border:none;padding:22px 16px;position:relative;overflow:hidden
+}
+.hero::before{content:'';position:absolute;top:-46%;left:50%;transform:translateX(-50%);width:280px;height:280px;background:radial-gradient(circle, rgba(47,189,232,.30), transparent 62%);pointer-events:none}
+.hero > *{position:relative}
+.hero{min-height:238px;display:flex;flex-direction:column;justify-content:center}
+.hero .dial{position:absolute;top:50%;left:50%;width:198px;height:198px;transform:translate(-50%,-50%);opacity:.6;pointer-events:none}
+.hero .big{font-size:56px;font-weight:bold;line-height:1}
+.hero .lbl{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:13px;letter-spacing:1px;text-transform:uppercase;opacity:.85;margin-top:6px}
+.hero .when{font-size:15px;margin-top:8px;opacity:.95}
+.hero .abtn{background:rgba(255,255,255,.16);color:var(--accent-ink);border:1px solid rgba(255,255,255,.3);margin-top:12px}
+.daterow{display:flex;align-items:center;gap:12px}
+.daterow .chip{
+  flex:0 0 62px;text-align:center;background:var(--gold);color:var(--gold-ink);
+  border-radius:10px;padding:7px 4px;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif
+}
+.daterow .chip b{display:block;font-size:19px;line-height:1.1}
+.daterow .chip span{font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+.daterow .chip.past{background:var(--line);color:var(--muted)}
+.daterow .dt-t{font-size:16px;font-weight:bold}
+.daterow .dt-s{font-size:13px;color:var(--muted);margin-top:2px;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif}
+.verify{
+  font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:12px;color:var(--muted);
+  text-align:center;margin:14px 0 4px;line-height:1.6
+}
+.verify a{color:var(--accent);font-weight:600}
+body.dark .verify a{color:#6fc9e8}
+a.linkrow{
+  display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)
+}
+a.linkrow .lr-e{font-size:24px;flex:0 0 32px;text-align:center}
+.lr-ic{flex:0 0 40px;width:40px;height:40px;border-radius:50%;background:rgba(47,189,232,.12);border:1px solid rgba(47,189,232,.4);display:flex;align-items:center;justify-content:center;color:var(--gold)}
+.lr-ic svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ic-s{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.nav-ic{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+a.linkrow .lr-t{font-size:16px;font-weight:bold}
+a.linkrow .lr-s{font-size:12px;color:var(--muted);font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;margin-top:2px}
+a.linkrow .lr-a{margin-left:auto;color:var(--muted);font-size:18px}
+.rep-name{font-size:17px;font-weight:bold}
+.rep-office{font-size:13px;color:var(--muted);font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;margin-top:2px}
+.rep-notes{font-size:14px;margin-top:8px;padding:8px 10px;background:var(--bg);border-radius:8px;white-space:pre-wrap}
+.rep-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.abtn{
+  font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:13px;font-weight:600;
+  border:none;border-radius:20px;padding:9px 15px;cursor:pointer;text-decoration:none;
+  display:inline-flex;align-items:center;gap:5px
+}
+.abtn.call{background:var(--ok);color:#fff}
+.abtn.mail{background:var(--accent);color:var(--accent-ink)}
+.abtn.web{background:var(--gold);color:var(--gold-ink)}
+.abtn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.abtn,.iconbtn,nav button,.logbtn,a.linkrow,.editpen{transition:transform .1s ease-out}
+.abtn:active,.iconbtn:active,nav button:active,.editpen:active{transform:scale(.93)}
+.logbtn:active{transform:scale(.96)}
+a.linkrow:active{transform:scale(.98)}
+.rep-head{display:flex;align-items:flex-start}
+.rep-head .grow{flex:1;min-width:0}
+.editpen{background:none;border:none;font-size:16px;cursor:pointer;color:var(--muted);padding:4px}
+.fillin{border:2px dashed var(--gold);background:transparent}
+.addbtn{
+  width:100%;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px;font-weight:600;
+  background:transparent;color:var(--muted);border:2px dashed var(--line);border-radius:14px;
+  padding:12px;cursor:pointer;margin-bottom:10px
+}
+.ev-empty{text-align:center;color:var(--muted);padding:26px 10px;font-size:15px;line-height:1.6}
+.ev-next{border-left:5px solid var(--gold)}
+.ev-title{font-size:17px;font-weight:bold}
+.ev-meta{font-size:13px;color:var(--muted);font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;margin-top:3px}
+.ev-notes{font-size:14px;margin-top:6px;white-space:pre-wrap}
+.ev-past{opacity:.55}
+.nextlbl{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--gold-ink);background:var(--gold);display:inline-block;padding:2px 8px;border-radius:10px;margin-bottom:6px}
+.monthcard{background:var(--accent);color:var(--accent-ink);border:none}
+.monthcard .m-title{font-size:18px;font-weight:bold}
+.monthcard .m-counts{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:15px;margin-top:8px;line-height:1.7}
+.monthcard .m-total{font-size:34px;font-weight:bold;margin-top:6px}
+.monthcard .m-tlbl{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:1px;opacity:.85}
+.monthcard .rep-actions .abtn{background:rgba(255,255,255,.16);color:var(--accent-ink);border:1px solid rgba(255,255,255,.3)}
+.loggrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.logbtn{
+  background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);
+  padding:16px 10px;text-align:center;cursor:pointer;position:relative
+}
+.logbtn .lb-e{font-size:30px;line-height:1}
+.logbtn .lb-l{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px;font-weight:600;margin-top:6px;color:var(--ink)}
+.logbtn .lb-c{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:11px;color:var(--muted);margin-top:2px}
+.logbtn .lb-x{position:absolute;top:6px;right:9px;color:var(--muted);font-size:13px;background:none;border:none;cursor:pointer;padding:3px}
+.histrow{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid var(--line);font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px}
+.histrow:last-child{border-bottom:none}
+.histrow .hr-x{margin-left:auto;background:none;border:none;color:var(--muted);font-size:15px;cursor:pointer;padding:4px}
+nav{
+  position:fixed;bottom:0;left:0;right:0;background:var(--card);border-top:1px solid var(--line);
+  display:flex;justify-content:space-around;
+  padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:20
+}
+nav button{
+  background:none;border:none;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  font-size:10px;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 10px;border-radius:12px
+}
+nav button .ic{font-size:21px;line-height:1}
+nav button.on{color:var(--accent);font-weight:700}
+body.dark nav button.on{color:#6fc9e8}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:40;align-items:flex-end;justify-content:center}
+.modal-bg.show{display:flex}
+.modal{
+  background:var(--card);width:100%;max-width:640px;border-radius:18px 18px 0 0;
+  padding:20px 18px calc(20px + env(safe-area-inset-bottom));max-height:88vh;overflow-y:auto
+}
+.modal h3{font-size:18px;margin-bottom:14px}
+.modal label{display:block;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:12px;font-weight:600;color:var(--muted);margin:12px 0 4px;text-transform:uppercase;letter-spacing:.6px}
+.modal input,.modal textarea,.modal select{
+  width:100%;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;
+  padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)
+}
+.modal textarea{min-height:70px;resize:vertical}
+.modal-row{display:flex;gap:10px;margin-top:18px}
+.modal-row .abtn{flex:1;justify-content:center;padding:13px}
+.del-link{display:block;text-align:center;margin-top:14px;color:var(--danger);font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px;background:none;border:none;cursor:pointer;width:100%}
+.toast{
+  position:fixed;bottom:88px;left:50%;
+  background:var(--ink);color:var(--bg);font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+  font-size:14px;padding:10px 18px;border-radius:24px;opacity:0;
+  transform:translate(-50%,10px);transition:opacity .25s,transform .25s ease-out;z-index:60;pointer-events:none;
+  max-width:88vw;text-align:center
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.installbar{
+  background:var(--gold);color:var(--gold-ink);border-radius:14px;padding:12px 14px;margin-bottom:14px;
+  font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px;line-height:1.5;display:none
+}
+.installbar.show{display:block}
+.installbar b{display:block;margin-bottom:2px}
+.installbar button{float:right;background:none;border:none;font-size:16px;cursor:pointer;color:var(--gold-ink);padding:0 0 0 10px}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:13px 2px;border-bottom:1px solid var(--line);font-size:16px;gap:10px}
+.set-row:last-child{border-bottom:none}
+.set-row .sub{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:12px;color:var(--muted);margin-top:2px}
+.tour-bg{position:fixed;inset:0;background:rgba(15,18,28,.55);display:none;z-index:80;align-items:flex-end;justify-content:center}
+.tour-bg.show{display:flex}
+.tour{
+  background:var(--card);width:100%;max-width:640px;border-radius:18px 18px 0 0;
+  padding:24px 20px calc(24px + env(safe-area-inset-bottom));box-shadow:0 -4px 24px rgba(0,0,0,.25)
+}
+.tour .t-e{font-size:40px;text-align:center}
+.tour .t-t{font-size:20px;font-weight:bold;text-align:center;margin-top:8px}
+.tour .t-b{font-size:15px;line-height:1.6;text-align:center;color:var(--muted);margin-top:8px;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif}
+.tour .t-dots{display:flex;justify-content:center;gap:7px;margin:16px 0 4px}
+.tour .t-dots span{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.tour .t-dots span.on{background:var(--gold)}
+.tour .t-row{display:flex;gap:10px;margin-top:16px;align-items:center}
+.tour .t-row .abtn{justify-content:center;padding:13px 18px}
+.tour .t-row .grow1{flex:1}
+.opt{display:block;width:100%;text-align:left;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;padding:13px 14px;margin-top:8px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);cursor:pointer}
+.opt.sel{border-color:var(--gold);background:rgba(47,189,232,.14);font-weight:600}
+.plan-card{border-left:5px solid var(--gold)}
+.plan-line{font-size:15px;margin-top:6px}
+.plan-line b{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);display:block}
+.plan-cta{border:2px dashed var(--gold);background:transparent;text-align:center;padding:18px 16px;cursor:pointer}
+.plan-cta .pc-t{font-size:17px;font-weight:bold;margin-top:8px}
+.plan-cta .pc-s{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:13px;color:var(--muted);margin-top:4px}
+.plan-cta .lr-ic{margin:0 auto}
+.ring{position:relative;width:96px;height:96px;margin:8px auto 2px}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring .m-total{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;margin-top:0}
+#ringFg{transition:stroke-dashoffset .6s cubic-bezier(.22,.9,.3,1)}
+.toast.action{pointer-events:auto}
+.toast .t-undo{font-weight:800;text-decoration:underline;color:inherit;background:none;border:none;font-size:14px;margin-left:12px;cursor:pointer}
+.sess-bg{position:fixed;inset:0;background:var(--hgrad);z-index:70;display:none;flex-direction:column;padding:calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));color:var(--accent-ink)}
+.sess-bg.show{display:flex}
+.sess-top{text-align:center;margin-bottom:14px}
+.sess-loc{font-size:17px;font-weight:bold}
+.sess-timer{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:40px;font-weight:700;letter-spacing:1px;margin-top:2px}
+.sess-sub{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:12px;opacity:.8;text-transform:uppercase;letter-spacing:1px}
+.sess-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px;min-height:0}
+.sess-btn{position:relative;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.25);border-radius:18px;color:var(--accent-ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:transform .1s ease-out}
+.sess-btn:active{transform:scale(.97)}
+.sess-btn .sb-e{font-size:30px}
+.sess-btn .sb-n{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:44px;font-weight:800;line-height:1;color:var(--gold)}
+.sess-btn .sb-l{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:13px;font-weight:600;opacity:.9}
+.sess-btn .sb-m{position:absolute;top:8px;right:10px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.25);color:var(--accent-ink);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.sess-end{margin-top:14px;width:100%;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;font-weight:700;background:var(--gold);color:var(--gold-ink);border:none;border-radius:14px;padding:16px;cursor:pointer}
+.script-card{cursor:pointer}
+.script-prev{font-size:14px;color:var(--muted);margin-top:4px;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.reader{font-size:19px;line-height:1.75;white-space:pre-wrap}
+.about-body{font-size:15px;line-height:1.65}
+.about-body p{margin-bottom:12px}
+.about-body .a-cred{font-style:italic;color:var(--muted);margin-top:16px}
+.about-body a{color:var(--accent);font-weight:600}
+body.dark .about-body a{color:#6fc9e8}
+.m-best{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:12px;margin-top:8px;opacity:.85}
+.m-enc{font-size:14px;font-style:italic;margin-top:10px;opacity:.9}
+.chip.soon{background:#e2892b !important;color:#241a08 !important}
+.chip.urgent{background:#c94f3d !important;color:#fff !important}
+.spark{position:fixed;width:6px;height:6px;border-radius:50%;z-index:90;pointer-events:none;animation:sparkFly .5s ease-out forwards}
+.confetti{position:fixed;top:-14px;width:8px;height:13px;z-index:90;pointer-events:none;border-radius:2px;animation:confFall linear forwards}
+@keyframes sparkFly{to{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
+@keyframes confFall{to{transform:translateY(108vh) rotate(560deg);opacity:.5}}
+@media (prefers-reduced-motion: no-preference){
+  .panel.entering{animation:panelIn .28s cubic-bezier(.22,.9,.3,1)}
+  .panel.entering .card{animation:cardIn .34s cubic-bezier(.22,.9,.3,1) backwards}
+  .panel.entering .card:nth-child(1){animation-delay:.02s}
+  .panel.entering .card:nth-child(2){animation-delay:.05s}
+  .panel.entering .card:nth-child(3){animation-delay:.08s}
+  .panel.entering .card:nth-child(4){animation-delay:.11s}
+  .panel.entering .card:nth-child(5){animation-delay:.14s}
+  .panel.entering .card:nth-child(6){animation-delay:.17s}
+  .panel.entering .card:nth-child(7){animation-delay:.20s}
+  .panel.entering .card:nth-child(8){animation-delay:.23s}
+  .panel.entering .card:nth-child(n+9){animation-delay:.25s}
+  .panel.entering .chip{animation:chipPop .34s cubic-bezier(.34,1.4,.5,1) backwards;animation-delay:.16s}
+  .modal-bg.show .modal{animation:sheetUp .32s cubic-bezier(.34,1.35,.5,1)}
+  .tour-bg.show .tour{animation:sheetUp .38s cubic-bezier(.34,1.35,.5,1)}
+  #needleG{transform-origin:20px 20px;animation:needleSettle 1.5s cubic-bezier(.4,.9,.5,1) .2s both}
+  .logbtn.pop{animation:btnPop .32s cubic-bezier(.34,1.5,.5,1)}
+  .chip.soon{animation:chipPulse 2.6s ease-in-out infinite}
+  .chip.urgent{animation:chipPulse 1.8s ease-in-out infinite}
+}
+@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes chipPop{from{transform:scale(1.18)}to{transform:scale(1)}}
+@keyframes sheetUp{from{transform:translateY(44px);opacity:.6}to{transform:none;opacity:1}}
+@keyframes needleSettle{0%{transform:rotate(-42deg)}55%{transform:rotate(10deg)}80%{transform:rotate(-5deg)}100%{transform:rotate(0)}}
+@keyframes btnPop{0%{transform:scale(1)}35%{transform:scale(1.12,.9)}70%{transform:scale(.97,1.05)}100%{transform:scale(1)}}
+@keyframes chipPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+</style>
+</head>
+<body>
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-bank" viewBox="0 0 24 24"><path d="M4 10l8-6 8 6M5.5 10v7M9.75 10v7M14.25 10v7M18.5 10v7M4 19.5h16"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21c-4.2-4.6-6.5-7.6-6.5-10.5a6.5 6.5 0 0 1 13 0c0 2.9-2.3 5.9-6.5 10.5z"/><circle cx="12" cy="10.3" r="2.4"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.2 12.3l2.6 2.6 5-5.6"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><path d="M4 7.5h16M4 12h16M4 16.5h16"/><circle cx="9" cy="7.5" r="1.8" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.8" fill="currentColor" stroke="none"/><circle cx="7.5" cy="16.5" r="1.8" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.8 3.5H4.5A1.5 1.5 0 0 0 3 5c0 8.8 7.2 16 16 16a1.5 1.5 0 0 0 1.5-1.5v-2.3l-4-1.6-1.9 1.9c-2.7-1.3-4.8-3.4-6.1-6.1l1.9-1.9z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="M4 7l8 5.5L20 7"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><ellipse cx="12" cy="12" rx="3.8" ry="8.5"/></symbol>
+  <symbol id="i-ballot" viewBox="0 0 24 24"><rect x="4" y="11.5" width="16" height="8" rx="1.5"/><path d="M8.5 11.5V5.5a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v6M10.5 7.5h3"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6.5 3.5h7l4 4v13h-11z"/><path d="M13.5 3.5V8h4M9 12h6M9 15.5h6"/></symbol>
+  <symbol id="i-news" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M7 9h10M7 12h10M7 15h6"/></symbol>
+  <symbol id="i-radio" viewBox="0 0 24 24"><rect x="3.5" y="8.5" width="17" height="11" rx="2"/><circle cx="15.8" cy="14" r="2.6"/><path d="M6.5 12h4M6.5 16h4M6 8.5L16 4"/></symbol>
+</svg>
+
+<header>
+  <svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true">
+    <defs>
+      <mask id="cresA"><rect width="40" height="40" fill="#fff"/><circle cx="27" cy="15" r="15" fill="#000"/></mask>
+      <mask id="cresB"><rect width="40" height="40" fill="#fff"/><circle cx="26" cy="16" r="10.5" fill="#000"/></mask>
+    </defs>
+    <circle cx="20" cy="20" r="17" fill="#7fd6f2" mask="url(#cresA)"/>
+    <circle cx="21" cy="19" r="12.5" fill="#2fbde8" mask="url(#cresB)"/>
+  </svg>
+  <div>
+    <div class="h-title" id="greet">Empower Compass</div>
+    <div class="h-sub">Democrats Empower Medina · Medina County, OH</div>
+  </div>
+  <div class="h-right">
+    <button class="iconbtn" id="themeBtn" aria-label="Toggle theme">◐</button>
+    <span class="badge" id="verBadge">EM 1.0</span>
+  </div>
+</header>
+
+<main>
+  <div class="installbar" id="installBar">
+    <button id="installDismiss" aria-label="Dismiss">✕</button>
+    <b>Keep me on your home screen</b>
+    <span id="installText"></span>
+  </div>
+
+  <!-- DATES -->
+  <section class="panel active" id="p-dates">
+    <div class="card hero">
+      <svg class="dial" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="86" fill="none" stroke="rgba(47,189,232,.32)" stroke-width="1.4"/><g stroke="rgba(47,189,232,.5)"><line x1="143.0" y1="25.5" x2="139.5" y2="31.6" stroke-width="1.4"/><line x1="174.5" y1="57.0" x2="168.4" y2="60.5" stroke-width="1.4"/><line x1="186.0" y1="100.0" x2="174.0" y2="100.0" stroke-width="2.4"/><line x1="174.5" y1="143.0" x2="168.4" y2="139.5" stroke-width="1.4"/><line x1="143.0" y1="174.5" x2="139.5" y2="168.4" stroke-width="1.4"/><line x1="100.0" y1="186.0" x2="100.0" y2="174.0" stroke-width="2.4"/><line x1="57.0" y1="174.5" x2="60.5" y2="168.4" stroke-width="1.4"/><line x1="25.5" y1="143.0" x2="31.6" y2="139.5" stroke-width="1.4"/><line x1="14.0" y1="100.0" x2="26.0" y2="100.0" stroke-width="2.4"/><line x1="25.5" y1="57.0" x2="31.6" y2="60.5" stroke-width="1.4"/><line x1="57.0" y1="25.5" x2="60.5" y2="31.6" stroke-width="1.4"/></g><text x="100" y="30" text-anchor="middle" fill="rgba(47,189,232,.85)" font-size="15" font-family="Georgia,serif">N</text></svg>
+      <div class="big" id="heroDays">–</div>
+      <div class="lbl" id="heroLbl">days until Election Day</div>
+      <div class="when" id="heroWhen"></div>
+      <div style="font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:11px;letter-spacing:2.4px;text-transform:uppercase;color:#7fd6f2;margin-top:10px">Empower · Educate · Elect</div>
+      <button class="abtn" id="shareCountBtn">↗ Share the countdown</button>
+    </div>
+    <div id="planSlot"></div>
+    <h2>Key dates · Nov 2026 General</h2>
+    <div id="dateList"></div>
+    <div class="verify" id="verifyLine"></div>
+    <h2>Voter toolbox</h2>
+    <a class="card linkrow" href="https://voterlookup.ohiosos.gov" target="_blank" rel="noopener">
+      <span class="lr-ic"><svg><use href="#i-check"></use></svg></span><span><span class="lr-t">Check my registration</span><br><span class="lr-s">Ohio Secretary of State · also shows your polling place</span></span><span class="lr-a">›</span>
+    </a>
+    <a class="card linkrow" href="https://lookup.boe.ohio.gov/vtrapp/medina/" target="_blank" rel="noopener">
+      <span class="lr-ic"><svg><use href="#i-ballot"></use></svg></span><span><span class="lr-t">My sample ballot</span><br><span class="lr-s">Medina County ballot &amp; precinct lookup</span></span><span class="lr-a">›</span>
+    </a>
+    <a class="card linkrow" href="https://www.boe.ohio.gov/medina" target="_blank" rel="noopener">
+      <span class="lr-ic"><svg><use href="#i-mail"></use></svg></span><span><span class="lr-t">Absentee &amp; early voting</span><br><span class="lr-s">Medina County Board of Elections</span></span><span class="lr-a">›</span>
+    </a>
+    <a class="card linkrow" href="https://www.voteohio.gov" target="_blank" rel="noopener">
+      <span class="lr-ic"><svg><use href="#i-globe"></use></svg></span><span><span class="lr-t">VoteOhio.gov</span><br><span class="lr-s">The state's official voting hub</span></span><span class="lr-a">›</span>
+    </a>
+    <h2>Democrats Empower Medina</h2>
+    <a class="card linkrow" href="https://empowermedina.com" target="_blank" rel="noopener">
+      <span class="lr-ic"><svg><use href="#i-globe"></use></svg></span><span><span class="lr-t">empowermedina.com</span><br><span class="lr-s">Who we are · priorities · Empower Hours</span></span><span class="lr-a">›</span>
+    </a>
+    <a class="card linkrow" href="https://empowermedina.com/events" target="_blank" rel="noopener">
+      <span class="lr-ic"><svg><use href="#i-cal"></use></svg></span><span><span class="lr-t">Upcoming events</span><br><span class="lr-s">Lit drops, phone banks, parades, and more</span></span><span class="lr-a">›</span>
+    </a>
+    <a class="card linkrow" href="mailto:democratsempowermedina@gmail.com">
+      <span class="lr-ic"><svg><use href="#i-mail"></use></svg></span><span><span class="lr-t">Email the team</span><br><span class="lr-s">democratsempowermedina@gmail.com</span></span><span class="lr-a">›</span>
+    </a>
+    <h2>Around town</h2>
+    <a class="card linkrow" href="https://www.wadsworthcity.com/AgendaCenter" target="_blank" rel="noopener">
+      <span class="lr-ic"><svg><use href="#i-doc"></use></svg></span><span><span class="lr-t">Council agendas &amp; minutes</span><br><span class="lr-s">City of Wadsworth Agenda Center</span></span><span class="lr-a">›</span>
+    </a>
+    <a class="card linkrow" href="https://medina-gazette.com" target="_blank" rel="noopener">
+      <span class="lr-ic"><svg><use href="#i-news"></use></svg></span><span><span class="lr-t">Medina County Gazette</span><br><span class="lr-s">Local news</span></span><span class="lr-a">›</span>
+    </a>
+    <a class="card linkrow" href="https://wadsworthcommunityradio.com" target="_blank" rel="noopener">
+      <span class="lr-ic"><svg><use href="#i-radio"></use></svg></span><span><span class="lr-t">Wadsworth Community Radio</span><br><span class="lr-s">Local coverage &amp; election results</span></span><span class="lr-a">›</span>
+    </a>
+  </section>
+
+  <!-- REPS -->
+  <section class="panel" id="p-reps">
+    <div id="repList"></div>
+  </section>
+
+  <!-- EVENTS -->
+  <section class="panel" id="p-events">
+    <button class="addbtn" id="addEventBtn">＋ Add an event</button>
+    <div id="eventList"></div>
+  </section>
+
+  <!-- LOG -->
+  <section class="panel" id="p-log">
+    <div class="card monthcard">
+      <div class="m-title" id="mTitle"></div>
+      <div class="ring">
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="6"/>
+          <circle id="ringFg" cx="50" cy="50" r="44" fill="none" stroke="#2fbde8" stroke-width="6" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5"/>
+        </svg>
+        <div class="m-total" id="mTotal">0</div>
+      </div>
+      <div class="m-tlbl">actions this month</div>
+      <div class="m-counts" id="mCounts"></div>
+      <div class="m-best" id="mBest"></div>
+      <div class="m-enc" id="mEnc"></div>
+      <div class="rep-actions"><button class="abtn" id="shareMonthBtn">↗ Share my month</button></div>
+    </div>
+    <div class="card">
+      <div class="rep-head"><div class="grow">
+        <div class="rep-name" id="yTitle"></div>
+        <div class="rep-office"><span id="yTotal">0</span> actions so far this year</div>
+      </div></div>
+      <div class="rep-notes" id="yCounts" style="margin-top:10px"></div>
+      <div class="rep-actions"><button class="abtn ghost" id="shareYearBtn">↗ Share my year</button></div>
+    </div>
+    <button class="addbtn" id="sessStart" style="border-color:var(--gold);color:var(--ink);font-size:15px">🚪 Start a canvass session</button>
+    <h2>Scripts &amp; talking points</h2>
+    <div id="scriptList"></div>
+    <button class="addbtn" id="addScriptBtn">＋ New script</button>
+    <h2>Tap to log an action</h2>
+    <div class="loggrid" id="logGrid"></div>
+    <button class="addbtn" id="addTypeBtn">＋ New action type</button>
+    <h2>History</h2>
+    <div class="card" id="histCard"></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="panel" id="p-settings">
+    <h2>Settings</h2>
+    <div class="card">
+      <div class="set-row">
+        <div>Your name<div class="sub">Shown in the header greeting</div></div>
+        <button class="abtn ghost" id="nameBtn">Edit</button>
+      </div>
+      <div class="set-row">
+        <div>How to install<div class="sub">Put this app on your home screen</div></div>
+        <button class="abtn ghost" id="howInstallBtn">Show</button>
+      </div>
+      <div class="set-row">
+        <div>About Empower Compass<div class="sub">What this is and who made it</div></div>
+        <button class="abtn ghost" id="aboutBtn">View</button>
+      </div>
+      <div class="set-row">
+        <div>App tour<div class="sub">Replay the welcome walkthrough</div></div>
+        <button class="abtn ghost" id="tourAgainBtn">Play</button>
+      </div>
+      <div class="set-row">
+        <div>Reset officials to defaults<div class="sub">Undo your edits to the Reps tab</div></div>
+        <button class="abtn ghost" id="resetRepsBtn">Reset</button>
+      </div>
+    </div>
+    <h2>Share this app</h2>
+    <div class="card">
+      <svg viewBox="0 0 41 41" width="200" height="200" style="display:block;margin:0 auto;background:#fff;border-radius:8px" shape-rendering="crispEdges"><rect width="41" height="41" fill="#fff"/><path d="M4 4h7v1h-7zM16 4h2v1h-2zM21 4h5v1h-5zM27 4h1v1h-1zM30 4h7v1h-7zM4 5h1v1h-1zM10 5h1v1h-1zM14 5h2v1h-2zM17 5h5v1h-5zM24 5h1v1h-1zM30 5h1v1h-1zM36 5h1v1h-1zM4 6h1v1h-1zM6 6h3v1h-3zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h4v1h-4zM20 6h7v1h-7zM30 6h1v1h-1zM32 6h3v1h-3zM36 6h1v1h-1zM4 7h1v1h-1zM6 7h3v1h-3zM10 7h1v1h-1zM12 7h4v1h-4zM18 7h1v1h-1zM20 7h1v1h-1zM24 7h1v1h-1zM30 7h1v1h-1zM32 7h3v1h-3zM36 7h1v1h-1zM4 8h1v1h-1zM6 8h3v1h-3zM10 8h1v1h-1zM12 8h1v1h-1zM15 8h1v1h-1zM17 8h1v1h-1zM19 8h1v1h-1zM21 8h2v1h-2zM25 8h1v1h-1zM27 8h1v1h-1zM30 8h1v1h-1zM32 8h3v1h-3zM36 8h1v1h-1zM4 9h1v1h-1zM10 9h1v1h-1zM12 9h1v1h-1zM14 9h1v1h-1zM17 9h4v1h-4zM22 9h1v1h-1zM24 9h1v1h-1zM30 9h1v1h-1zM36 9h1v1h-1zM4 10h7v1h-7zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM20 10h1v1h-1zM22 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM28 10h1v1h-1zM30 10h7v1h-7zM12 11h1v1h-1zM18 11h2v1h-2zM25 11h4v1h-4zM4 12h1v1h-1zM6 12h5v1h-5zM15 12h5v1h-5zM21 12h1v1h-1zM26 12h1v1h-1zM30 12h5v1h-5zM6 13h1v1h-1zM8 13h2v1h-2zM12 13h1v1h-1zM14 13h1v1h-1zM16 13h1v1h-1zM20 13h1v1h-1zM23 13h2v1h-2zM27 13h1v1h-1zM30 13h2v1h-2zM33 13h2v1h-2zM36 13h1v1h-1zM7 14h2v1h-2zM10 14h2v1h-2zM19 14h2v1h-2zM22 14h1v1h-1zM26 14h1v1h-1zM28 14h1v1h-1zM32 14h1v1h-1zM34 14h2v1h-2zM4 15h1v1h-1zM8 15h1v1h-1zM13 15h2v1h-2zM16 15h1v1h-1zM18 15h2v1h-2zM23 15h8v1h-8zM32 15h3v1h-3zM6 16h1v1h-1zM9 16h3v1h-3zM14 16h3v1h-3zM22 16h2v1h-2zM25 16h1v1h-1zM29 16h1v1h-1zM31 16h3v1h-3zM6 17h1v1h-1zM12 17h2v1h-2zM17 17h4v1h-4zM24 17h1v1h-1zM27 17h1v1h-1zM30 17h1v1h-1zM33 17h1v1h-1zM35 17h2v1h-2zM6 18h3v1h-3zM10 18h1v1h-1zM16 18h1v1h-1zM18 18h1v1h-1zM23 18h1v1h-1zM25 18h1v1h-1zM29 18h2v1h-2zM33 18h1v1h-1zM35 18h1v1h-1zM5 19h2v1h-2zM11 19h1v1h-1zM15 19h1v1h-1zM20 19h1v1h-1zM22 19h4v1h-4zM28 19h3v1h-3zM32 19h3v1h-3zM4 20h3v1h-3zM10 20h1v1h-1zM12 20h1v1h-1zM14 20h3v1h-3zM21 20h1v1h-1zM23 20h1v1h-1zM26 20h1v1h-1zM28 20h2v1h-2zM31 20h3v1h-3zM36 20h1v1h-1zM5 21h2v1h-2zM12 21h2v1h-2zM15 21h1v1h-1zM17 21h1v1h-1zM20 21h4v1h-4zM27 21h1v1h-1zM30 21h2v1h-2zM33 21h4v1h-4zM4 22h2v1h-2zM7 22h2v1h-2zM10 22h1v1h-1zM14 22h1v1h-1zM16 22h2v1h-2zM19 22h1v1h-1zM21 22h1v1h-1zM26 22h1v1h-1zM28 22h5v1h-5zM34 22h2v1h-2zM5 23h1v1h-1zM7 23h3v1h-3zM12 23h1v1h-1zM15 23h2v1h-2zM18 23h1v1h-1zM20 23h5v1h-5zM29 23h7v1h-7zM7 24h4v1h-4zM13 24h2v1h-2zM17 24h1v1h-1zM20 24h1v1h-1zM23 24h4v1h-4zM28 24h2v1h-2zM31 24h3v1h-3zM35 24h2v1h-2zM4 25h4v1h-4zM9 25h1v1h-1zM12 25h1v1h-1zM15 25h1v1h-1zM19 25h1v1h-1zM21 25h2v1h-2zM25 25h1v1h-1zM27 25h1v1h-1zM30 25h2v1h-2zM33 25h2v1h-2zM36 25h1v1h-1zM4 26h1v1h-1zM9 26h2v1h-2zM15 26h2v1h-2zM19 26h2v1h-2zM22 26h1v1h-1zM24 26h2v1h-2zM28 26h6v1h-6zM35 26h1v1h-1zM4 27h1v1h-1zM7 27h1v1h-1zM9 27h1v1h-1zM11 27h1v1h-1zM13 27h3v1h-3zM17 27h3v1h-3zM22 27h1v1h-1zM25 27h2v1h-2zM28 27h2v1h-2zM31 27h1v1h-1zM33 27h2v1h-2zM36 27h1v1h-1zM4 28h1v1h-1zM6 28h1v1h-1zM10 28h3v1h-3zM14 28h1v1h-1zM19 28h1v1h-1zM21 28h1v1h-1zM26 28h1v1h-1zM28 28h5v1h-5zM35 28h2v1h-2zM12 29h2v1h-2zM17 29h2v1h-2zM23 29h3v1h-3zM27 29h2v1h-2zM32 29h1v1h-1zM34 29h1v1h-1zM36 29h1v1h-1zM4 30h7v1h-7zM13 30h1v1h-1zM19 30h1v1h-1zM22 30h1v1h-1zM24 30h2v1h-2zM27 30h2v1h-2zM30 30h1v1h-1zM32 30h1v1h-1zM34 30h2v1h-2zM4 31h1v1h-1zM10 31h1v1h-1zM12 31h2v1h-2zM16 31h2v1h-2zM25 31h4v1h-4zM32 31h4v1h-4zM4 32h1v1h-1zM6 32h3v1h-3zM10 32h1v1h-1zM12 32h1v1h-1zM14 32h2v1h-2zM18 32h2v1h-2zM22 32h1v1h-1zM25 32h1v1h-1zM28 32h6v1h-6zM35 32h1v1h-1zM4 33h1v1h-1zM6 33h3v1h-3zM10 33h1v1h-1zM12 33h1v1h-1zM14 33h7v1h-7zM24 33h1v1h-1zM26 33h2v1h-2zM29 33h1v1h-1zM32 33h3v1h-3zM36 33h1v1h-1zM4 34h1v1h-1zM6 34h3v1h-3zM10 34h1v1h-1zM12 34h2v1h-2zM16 34h2v1h-2zM23 34h1v1h-1zM26 34h2v1h-2zM30 34h2v1h-2zM33 34h2v1h-2zM4 35h1v1h-1zM10 35h1v1h-1zM14 35h1v1h-1zM16 35h3v1h-3zM20 35h1v1h-1zM23 35h3v1h-3zM27 35h1v1h-1zM29 35h2v1h-2zM32 35h3v1h-3zM4 36h7v1h-7zM12 36h1v1h-1zM16 36h2v1h-2zM21 36h1v1h-1zM23 36h1v1h-1zM26 36h4v1h-4zM31 36h1v1h-1zM33 36h1v1h-1zM35 36h1v1h-1z" fill="#16232b"/></svg>
+      <div class="verify" style="margin:12px 0 4px">Have a friend scan this with their camera,<br>or send them the link.</div>
+      <div class="rep-actions" style="justify-content:center"><button class="abtn mail" id="shareAppBtn">↗ Send the link</button></div>
+    </div>
+    <h2>Backup</h2>
+    <div class="card">
+      <div class="set-row">
+        <div>Save a backup<div class="sub">Downloads one file with all your data</div></div>
+        <button class="abtn ghost" id="exportBtn">Save</button>
+      </div>
+      <div class="set-row">
+        <div>Restore from backup<div class="sub">Load a backup file on a new phone</div></div>
+        <button class="abtn ghost" id="importBtn">Load</button>
+        <input type="file" id="importFile" accept=".json,application/json" style="display:none">
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav>
+  <button data-p="dates" class="on"><svg class="nav-ic"><use href="#i-cal"></use></svg>Dates</button>
+  <button data-p="reps"><svg class="nav-ic"><use href="#i-bank"></use></svg>Reps</button>
+  <button data-p="events"><svg class="nav-ic"><use href="#i-pin"></use></svg>Events</button>
+  <button data-p="log"><svg class="nav-ic"><use href="#i-check"></use></svg>Log</button>
+  <button data-p="settings"><svg class="nav-ic"><use href="#i-more"></use></svg>More</button>
+</nav>
+
+<div class="tour-bg" id="tourBg">
+  <div class="tour">
+    <div class="t-e" id="tourE"></div>
+    <div class="t-t" id="tourT"></div>
+    <div class="t-b" id="tourB"></div>
+    <div class="t-dots" id="tourDots"></div>
+    <div class="t-row">
+      <button class="abtn ghost" id="tourSkip">Skip</button>
+      <span class="grow1"></span>
+      <button class="abtn ghost" id="tourBack">Back</button>
+      <button class="abtn mail" id="tourNext">Next</button>
+    </div>
+  </div>
+</div>
+<div class="sess-bg" id="sessBg">
+  <div class="sess-top">
+    <div class="sess-loc" id="sessLoc"></div>
+    <div class="sess-timer" id="sessTimer">0:00</div>
+    <div class="sess-sub">canvass session</div>
+  </div>
+  <div class="sess-grid" id="sessGrid"></div>
+  <button class="sess-end" id="sessEnd">End session</button>
+</div>
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modalBox"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+/* ============ Empower Compass (Democrats Empower Medina fork) · EM 1.0 · Aug 30 2026 ============ */
+var VERSION = 'EM 1.0 · Aug 30';
+var DATA_VERIFIED = 'August 22, 2026';
+
+/* ---------- guarded storage ---------- */
+var mem = {};
+function sGet(k){
+  try{ var v = localStorage.getItem(k); return v === null ? (k in mem ? mem[k] : null) : v; }
+  catch(e){ return k in mem ? mem[k] : null; }
+}
+function sSet(k,v){
+  mem[k] = v;
+  try{ localStorage.setItem(k,v); }catch(e){}
+}
+function jGet(k,fallback){
+  var raw = sGet(k);
+  if(raw === null) return fallback;
+  try{ return JSON.parse(raw); }catch(e){ return fallback; }
+}
+function jSet(k,obj){ sSet(k, JSON.stringify(obj)); }
+var MOTION_OK = !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+function animateCount(el, target, ms){
+  var start = null;
+  function frame(ts){
+    if(start === null) start = ts;
+    var p = Math.min(1, (ts - start) / ms);
+    var e2 = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(target * e2);
+    if(p < 1) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+var K_REPS='em_v1_reps', K_EVENTS='em_v1_events', K_PREFS='em_v1_prefs',
+    K_LOG='em_v1_log', K_TYPES='em_v1_logtypes', K_PLAN='em_v1_plan',
+    K_SCRIPTS='em_v1_scripts', K_SESS='em_v1_sessions', K_SESS_A='em_v1_sess_active';
+
+/* ---------- key dates (verified against Ohio SOS-sourced info, Jul 21 2026) ---------- */
+var KEY_DATES = [
+  {t:'Voter registration deadline', s:'Register or update your address by 9 PM · VoteOhio.gov', d:'2026-10-05'},
+  {t:'Early in-person voting begins', s:'Medina County Board of Elections, Medina', d:'2026-10-06'},
+  {t:'Absentee ballot request deadline', s:'Application must reach the Board of Elections by 8:30 PM', d:'2026-10-27'},
+  {t:'Last day of early voting', s:'Early in-person voting ends at 2 PM', d:'2026-11-02'},
+  {t:'Election Day', s:'Polls open 6:30 AM – 7:30 PM statewide. Mail ballots must be RECEIVED by 7:30 PM.', d:'2026-11-03'}
+];
+var ELECTION_DAY = '2026-11-03';
+
+/* ---------- default officials (verified Jul 21 2026; every card editable) ---------- */
+function defaultReps(){
+  return [
+    {sec:'City of Wadsworth', items:[
+      {id:'r1', name:'Robin Laubaugh', office:'Mayor', phone:'330-335-1521', email:'', web:'https://www.wadsworthcity.com', notes:''},
+      {id:'r2', name:'Daniel Rospert', office:'Council President', phone:'330-335-2759', email:'', web:'https://www.wadsworthcity.com', notes:'Council meets 1st & 3rd Tuesdays. Clerk: 330-335-2759. Current council terms run Jan 2026 \u2013 Dec 2027.'},
+      {id:'r3', name:'Mike Reese', office:'Council · Ward 1', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
+      {id:'r4', name:'Jon Yurchiak', office:'Council · Ward 2', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
+      {id:'r5', name:'Jeanne Hines', office:'Council · Ward 3', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
+      {id:'r6', name:'Angela May', office:'Council · Ward 4', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
+      {id:'r7', name:'Berger · Maxwell · Stugmyer', office:'Council · At-Large (3 seats)', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:'Zach Berger, Chris Maxwell, Thomas Stugmyer'}
+    ]},
+    {sec:'Medina County', items:[
+      {id:'r8', name:'Board of Elections', office:'Voter records · ballots · precincts', phone:'', email:'', web:'https://www.boe.ohio.gov/medina', notes:'Early voting happens here.'}
+    ]},
+    {sec:'State of Ohio', items:[
+      {id:'r9', name:'Mike DeWine', office:'Governor (term-limited · seat on the Nov ballot)', phone:'', email:'', web:'https://governor.ohio.gov', notes:''},
+      {id:'r10', name:'Mark Romanchuk', office:'State Senator · District 22', phone:'', email:'', web:'https://www.ohiosenate.gov', notes:''},
+      {id:'r11', name:'Sharon Ray', office:'State Representative · District 66', phone:'614-466-8140', email:'', web:'https://www.ohiohouse.gov', notes:'Lives in Wadsworth. Not seeking re-election \u2014 this seat is open on the Nov 2026 ballot.'}
+    ]},
+    {sec:'Federal', items:[
+      {id:'r12', name:'Jon Husted', office:'U.S. Senator (seat on the Nov ballot)', phone:'202-224-3121', email:'', web:'https://www.senate.gov', notes:'Capitol switchboard — ask for the senator\u2019s office.'},
+      {id:'r13', name:'Bernie Moreno', office:'U.S. Senator', phone:'202-224-3121', email:'', web:'https://www.senate.gov', notes:'Capitol switchboard — ask for the senator\u2019s office.'},
+      {id:'r14', name:'Max Miller', office:'U.S. Representative · OH-7', phone:'202-224-3121', email:'', web:'https://www.house.gov', notes:'Capitol switchboard — ask for the representative\u2019s office.'}
+    ]}
+  ];
+}
+function defaultLogTypes(){
+  return [
+    {k:'call', e:'📞', l:'Call made'},
+    {k:'postcard', e:'📮', l:'Postcard'},
+    {k:'door', e:'🚪', l:'Doors knocked'},
+    {k:'meeting', e:'🤝', l:'Meeting'}
+  ];
+}
+
+/* ---------- state ---------- */
+var reps = jGet(K_REPS, null) || defaultReps();
+var events = jGet(K_EVENTS, []);
+var prefs = jGet(K_PREFS, {theme:'', name:'', installDismissed:false, seeded:false});
+var log = jGet(K_LOG, []);
+var logTypes = jGet(K_TYPES, null) || defaultLogTypes();
+
+/* one-time starter event: council nights */
+if(!prefs.seeded){
+  if(events.length === 0){
+    events.push({
+      id:'e-council', title:'Wadsworth City Council', date:'2026-07-07', time:'',
+      place:'City Hall', notes:'Agendas: wadsworthcity.com/AgendaCenter', repeat:'first-third'
+    });
+    jSet(K_EVENTS, events);
+  }
+  prefs.seeded = true; jSet(K_PREFS, prefs);
+}
+
+/* ---------- helpers ---------- */
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function toast(msg, ms){
+  var t = $('toast'); t.textContent = msg; t.classList.remove('action'); t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(function(){ t.classList.remove('show'); }, ms || 2200);
+}
+function midnight(iso){
+  var p = iso.split('-');
+  return new Date(+p[0], +p[1]-1, +p[2]);
+}
+function daysUntil(iso){
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((midnight(iso) - today) / 86400000);
+}
+function niceDate(iso){
+  return midnight(iso).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+}
+function niceDateFull(iso){
+  return midnight(iso).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+}
+function niceTs(ts){
+  return new Date(ts).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}) +
+    ' · ' + new Date(ts).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+}
+var WD_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+function ordinal(n){ return n===1?'1st':n===2?'2nd':n===3?'3rd':n+'th'; }
+
+/* ---------- recurrence engine (unit-tested) ---------- */
+function nthWeekdayOfMonth(y,m,weekday,n){
+  var d = new Date(y,m,1);
+  var offset = (weekday - d.getDay() + 7) % 7;
+  var day = 1 + offset + (n-1)*7;
+  var dt = new Date(y,m,day);
+  return dt.getMonth() === m ? dt : null;
+}
+function nextOccurrence(ev, from){
+  if(!ev.date) return 0;
+  var rule = ev.repeat || 'none';
+  var base = midnight(ev.date);
+  var timeMs = 86399000;
+  if(ev.time){ var hm = ev.time.split(':'); timeMs = (+hm[0])*3600000 + (+hm[1])*60000; }
+  if(rule === 'none') return base.getTime() + timeMs;
+  var fromDay = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+  if(rule === 'weekly' || rule === 'biweekly'){
+    var step = (rule === 'weekly' ? 7 : 14) * 86400000;
+    var cur = base.getTime();
+    while(cur + timeMs < from.getTime()) cur += step;
+    return cur + timeMs;
+  }
+  if(rule === 'monthly-date'){
+    var dom = base.getDate();
+    var y = fromDay.getFullYear(), m = fromDay.getMonth();
+    for(var i=0;i<48;i++){
+      var cand = new Date(y, m, dom);
+      if(cand.getMonth() === m && cand.getTime() >= base.getTime() && cand.getTime() + timeMs >= from.getTime())
+        return cand.getTime() + timeMs;
+      m++; if(m > 11){ m = 0; y++; }
+    }
+    return base.getTime() + timeMs;
+  }
+  var wd = base.getDay();
+  var ns = rule === 'first-third' ? [1,3] : [Math.ceil(base.getDate()/7)];
+  var y2 = fromDay.getFullYear(), m2 = fromDay.getMonth();
+  for(var j=0;j<48;j++){
+    var best = null;
+    for(var q=0;q<ns.length;q++){
+      var c = nthWeekdayOfMonth(y2, m2, wd, ns[q]);
+      if(c && c.getTime() >= base.getTime() && c.getTime() + timeMs >= from.getTime()){
+        if(best === null || c.getTime() < best) best = c.getTime();
+      }
+    }
+    if(best !== null) return best + timeMs;
+    m2++; if(m2 > 11){ m2 = 0; y2++; }
+  }
+  return base.getTime() + timeMs;
+}
+function repeatLabel(ev){
+  var r = ev.repeat || 'none';
+  if(r === 'none') return '';
+  if(r === 'weekly') return 'Every week';
+  if(r === 'biweekly') return 'Every 2 weeks';
+  if(r === 'monthly-date') return 'Monthly';
+  var base = midnight(ev.date);
+  var wd = WD_SHORT[base.getDay()];
+  if(r === 'first-third') return '1st & 3rd ' + wd;
+  return ordinal(Math.ceil(base.getDate()/7)) + ' ' + wd + ' monthly';
+}
+
+/* ---------- theme ---------- */
+function applyTheme(){
+  var t = prefs.theme;
+  if(!t){ t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'; }
+  document.body.classList.toggle('dark', t === 'dark');
+}
+$('themeBtn').onclick = function(){
+  prefs.theme = document.body.classList.contains('dark') ? 'light' : 'dark';
+  jSet(K_PREFS, prefs); applyTheme();
+};
+
+/* ---------- header / version ---------- */
+function renderGreet(){
+  $('greet').textContent = prefs.name ? ('Hi, ' + prefs.name + '!') : 'Empower Compass';
+}
+$('verBadge').onclick = function(){ toast('Empower Compass ' + VERSION); };
+var APP_URL = 'https://motbuchanan.github.io/empower-compass/';
+$('shareCountBtn').onclick = function(){
+  var d = daysUntil(ELECTION_DAY);
+  var txt;
+  if(d > 1) txt = d + ' days until Election Day (' + niceDate(ELECTION_DAY) + ') — are you registered? VoteOhio.gov';
+  else if(d === 1) txt = 'Tomorrow is Election Day — polls open 6:30 AM to 7:30 PM. Make a plan!';
+  else if(d === 0) txt = 'It\u2019s Election Day! Polls are open 6:30 AM to 7:30 PM. Go vote!';
+  else txt = 'Election Day has passed — check VoteOhio.gov for what\u2019s next.';
+  shareText(txt);
+};
+
+/* ---------- nav ---------- */
+var navBtns = document.querySelectorAll('nav button');
+function showPanel(p){
+  document.querySelectorAll('.panel').forEach(function(el){ el.classList.remove('active', 'entering'); });
+  var el = $('p-' + p);
+  el.classList.add('active');
+  if(MOTION_OK){
+    el.classList.add('entering');
+    clearTimeout(showPanel._t);
+    showPanel._t = setTimeout(function(){ el.classList.remove('entering'); }, 480);
+  }
+  navBtns.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-p') === p); });
+  if(p === 'log' && MOTION_OK){
+    var fg = $('ringFg');
+    if(fg){
+      var end = fg.style.strokeDashoffset;
+      fg.style.transition = 'none';
+      fg.style.strokeDashoffset = '276.5';
+      void fg.offsetWidth;
+      fg.style.transition = '';
+      fg.style.strokeDashoffset = end;
+    }
+    animateCount($('mTotal'), monthEntries().length, 500);
+    animateCount($('yTotal'), yearEntries().length, 650);
+  }
+}
+navBtns.forEach(function(b){
+  b.onclick = function(){ showPanel(b.getAttribute('data-p')); };
+});
+
+/* ---------- DATES ---------- */
+function renderDates(){
+  var dTo = daysUntil(ELECTION_DAY);
+  if(dTo > 1){
+    if(!renderDates._done && MOTION_OK){ animateCount($('heroDays'), dTo, 750); }
+    else { $('heroDays').textContent = dTo; }
+    $('heroLbl').textContent = 'days until Election Day';
+  }
+  else if(dTo === 1){ $('heroDays').textContent = '1'; $('heroLbl').textContent = 'day until Election Day'; }
+  else if(dTo === 0){ $('heroDays').textContent = 'TODAY'; $('heroLbl').textContent = 'is Election Day — go vote!'; }
+  else { $('heroDays').textContent = '✓'; $('heroLbl').textContent = 'Election Day has passed'; }
+  $('heroWhen').textContent = niceDateFull(ELECTION_DAY);
+  renderDates._done = true;
+
+  var html = '';
+  KEY_DATES.forEach(function(kd){
+    var d = daysUntil(kd.d);
+    var chip;
+    if(d > 0){
+      var ccls = 'chip';
+      if(d <= 30) ccls += (kd.d === '2026-10-05' ? ' urgent' : ' soon');
+      chip = '<div class="' + ccls + '"><b>' + d + '</b><span>day' + (d===1?'':'s') + '</span></div>';
+    }
+    else if(d === 0) chip = '<div class="chip"><b>NOW</b><span>today</span></div>';
+    else chip = '<div class="chip past"><b>✓</b><span>done</span></div>';
+    html += '<div class="card daterow">' + chip +
+      '<div><div class="dt-t">' + esc(kd.t) + '</div>' +
+      '<div class="dt-s">' + esc(niceDate(kd.d)) + ' · ' + esc(kd.s) + '</div></div></div>';
+  });
+  $('dateList').innerHTML = html;
+
+  var stale = daysUntil(ELECTION_DAY) < 0;
+  $('verifyLine').innerHTML =
+    (stale ? '<b>This election has passed — check VoteOhio.gov for what\u2019s next.</b><br>' : '') +
+    'Dates last verified ' + esc(DATA_VERIFIED) + '. Always confirm at ' +
+    '<a href="https://www.voteohio.gov" target="_blank" rel="noopener">VoteOhio.gov</a>.';
+}
+
+/* ---------- REPS ---------- */
+function findRep(id){
+  for(var i=0;i<reps.length;i++){
+    for(var j=0;j<reps[i].items.length;j++){
+      if(reps[i].items[j].id === id) return {sec:i, idx:j, rep:reps[i].items[j]};
+    }
+  }
+  return null;
+}
+function renderReps(){
+  var html = '';
+  reps.forEach(function(section, si){
+    html += '<h2>' + esc(section.sec) + '</h2>';
+    section.items.forEach(function(r){
+      var isFill = r.fillin && !r.name;
+      html += '<div class="card' + (isFill ? ' fillin' : '') + '">';
+      html += '<div class="rep-head"><div class="grow">';
+      html += '<div class="rep-name">' + esc(r.name || 'Fill me in') + '</div>';
+      html += '<div class="rep-office">' + esc(r.office) + '</div>';
+      html += '</div><button class="editpen" data-edit="' + esc(r.id) + '" aria-label="Edit">✎</button></div>';
+      if(r.notes) html += '<div class="rep-notes">' + esc(r.notes) + '</div>';
+      var acts = '';
+      if(r.phone) acts += '<a class="abtn call" href="tel:' + esc(r.phone.replace(/[^0-9+]/g,'')) + '"><svg class="ic-s"><use href="#i-phone"></use></svg>Call</a>';
+      if(r.email) acts += '<a class="abtn mail" href="mailto:' + esc(r.email) + '"><svg class="ic-s"><use href="#i-mail"></use></svg>Email</a>';
+      if(r.web) acts += '<a class="abtn web" href="' + esc(r.web) + '" target="_blank" rel="noopener"><svg class="ic-s"><use href="#i-globe"></use></svg>Website</a>';
+      if(acts) html += '<div class="rep-actions">' + acts + '</div>';
+      html += '</div>';
+    });
+    html += '<button class="addbtn" data-addsec="' + si + '">＋ Add a card to ' + esc(section.sec) + '</button>';
+  });
+  $('repList').innerHTML = html;
+
+  document.querySelectorAll('[data-edit]').forEach(function(b){
+    b.onclick = function(){ openRepModal(b.getAttribute('data-edit')); };
+  });
+  document.querySelectorAll('[data-addsec]').forEach(function(b){
+    b.onclick = function(){ openRepModal(null, +b.getAttribute('data-addsec')); };
+  });
+}
+
+/* ---------- EVENTS ---------- */
+function niceTime(hhmm){
+  var hm = hhmm.split(':'); var h = +hm[0]; var m = hm[1];
+  var ap = h >= 12 ? 'PM' : 'AM'; h = h % 12; if(h === 0) h = 12;
+  return h + ':' + m + ' ' + ap;
+}
+function occDateISO(ts){
+  var x = new Date(ts);
+  var mm = String(x.getMonth()+1); if(mm.length < 2) mm = '0' + mm;
+  var dd = String(x.getDate()); if(dd.length < 2) dd = '0' + dd;
+  return x.getFullYear() + '-' + mm + '-' + dd;
+}
+function eventShareText(ev, occTs){
+  var parts = [ev.title];
+  var dISO = occTs ? occDateISO(occTs) : ev.date;
+  if(dISO) parts.push(niceDate(dISO) + (ev.time ? ' · ' + niceTime(ev.time) : ''));
+  var rl = repeatLabel(ev);
+  if(rl) parts.push(rl);
+  if(ev.place) parts.push(ev.place);
+  if(ev.notes) parts.push(ev.notes);
+  return parts.join(' — ');
+}
+function renderEvents(){
+  if(!events.length){
+    $('eventList').innerHTML = '<div class="card ev-empty">Nothing here yet.<br>Add meetings, rallies, fundraisers,<br>postcard nights — anything coming up.</div>';
+    return;
+  }
+  var now = new Date();
+  var nowTs = now.getTime();
+  var decorated = events.map(function(ev){
+    var occ = nextOccurrence(ev, now);
+    var isRepeat = (ev.repeat || 'none') !== 'none';
+    var past = !isRepeat && occ < nowTs;
+    return {ev:ev, occ:occ, past:past};
+  });
+  var upcoming = decorated.filter(function(d){ return !d.past; })
+    .sort(function(a,b){ return a.occ - b.occ; });
+  var past = decorated.filter(function(d){ return d.past; })
+    .sort(function(a,b){ return b.occ - a.occ; });
+  var nextId = upcoming.length ? upcoming[0].ev.id : null;
+
+  var html = '';
+  upcoming.concat(past).forEach(function(d){
+    var ev = d.ev;
+    var isNext = ev.id === nextId;
+    html += '<div class="card' + (isNext ? ' ev-next' : '') + (d.past ? ' ev-past' : '') + '">';
+    if(isNext) html += '<span class="nextlbl">Up next</span>';
+    html += '<div class="rep-head"><div class="grow">';
+    html += '<div class="ev-title">' + esc(ev.title) + '</div>';
+    var meta = [];
+    if(ev.date) meta.push(niceDate(occDateISO(d.occ)) + (ev.time ? ' · ' + niceTime(ev.time) : ''));
+    var rl = repeatLabel(ev);
+    if(rl) meta.push('↻ ' + rl);
+    if(ev.place) meta.push(ev.place);
+    if(meta.length) html += '<div class="ev-meta">' + esc(meta.join(' · ')) + '</div>';
+    html += '</div><button class="editpen" data-evedit="' + esc(ev.id) + '" aria-label="Edit">✎</button></div>';
+    if(ev.notes) html += '<div class="ev-notes">' + esc(ev.notes) + '</div>';
+    html += '<div class="rep-actions"><button class="abtn ghost" data-evshare="' + esc(ev.id) + '">↗ Share</button>' +
+      '<button class="abtn ghost" data-evcal="' + esc(ev.id) + '"><svg class="ic-s"><use href="#i-cal"></use></svg>Add to calendar</button></div>';
+    html += '</div>';
+  });
+  $('eventList').innerHTML = html;
+
+  document.querySelectorAll('[data-evedit]').forEach(function(b){
+    b.onclick = function(){ openEventModal(b.getAttribute('data-evedit')); };
+  });
+  document.querySelectorAll('[data-evshare]').forEach(function(b){
+    b.onclick = function(){
+      var ev = events.filter(function(e){ return e.id === b.getAttribute('data-evshare'); })[0];
+      if(!ev) return;
+      var txt = eventShareText(ev, nextOccurrence(ev, new Date()));
+      shareText(txt);
+    };
+  });
+  document.querySelectorAll('[data-evcal]').forEach(function(b){
+    b.onclick = function(){
+      var ev = events.filter(function(e){ return e.id === b.getAttribute('data-evcal'); })[0];
+      if(!ev) return;
+      if(!ev.date){ toast('Give the event a date first'); return; }
+      downloadFile(icsFilename(ev), 'text/calendar', buildICS(ev));
+      toast('Open the downloaded file to add it to your calendar');
+    };
+  });
+}
+/* ---------- .ics calendar export ---------- */
+var WD_ICS = ['SU','MO','TU','WE','TH','FR','SA'];
+function pad2(n){ return n < 10 ? '0' + n : '' + n; }
+function icsEsc(s){
+  return String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+}
+function icsFilename(ev){
+  var slug = (ev.title || 'event').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+  return (slug || 'event') + '.ics';
+}
+function buildICS(ev){
+  var occ = new Date(nextOccurrence(ev, new Date()));
+  var y = occ.getFullYear(), mo = pad2(occ.getMonth() + 1), da = pad2(occ.getDate());
+  var lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Empower Compass//EN', 'BEGIN:VEVENT'];
+  lines.push('UID:' + ev.id + '@empower-compass');
+  var now = new Date();
+  lines.push('DTSTAMP:' + now.getUTCFullYear() + pad2(now.getUTCMonth() + 1) + pad2(now.getUTCDate()) +
+    'T' + pad2(now.getUTCHours()) + pad2(now.getUTCMinutes()) + '00Z');
+  if(ev.time){
+    var hm = ev.time.split(':');
+    lines.push('DTSTART:' + y + mo + da + 'T' + pad2(+hm[0]) + pad2(+hm[1]) + '00');
+    var end = new Date(occ.getFullYear(), occ.getMonth(), occ.getDate(), +hm[0] + 1, +hm[1]);
+    lines.push('DTEND:' + end.getFullYear() + pad2(end.getMonth() + 1) + pad2(end.getDate()) +
+      'T' + pad2(end.getHours()) + pad2(end.getMinutes()) + '00');
+  } else {
+    lines.push('DTSTART;VALUE=DATE:' + y + mo + da);
+    var nd = new Date(occ.getFullYear(), occ.getMonth(), occ.getDate() + 1);
+    lines.push('DTEND;VALUE=DATE:' + nd.getFullYear() + pad2(nd.getMonth() + 1) + pad2(nd.getDate()));
+  }
+  var r = ev.repeat || 'none';
+  var base = midnight(ev.date);
+  var wd = WD_ICS[base.getDay()];
+  if(r === 'weekly') lines.push('RRULE:FREQ=WEEKLY');
+  else if(r === 'biweekly') lines.push('RRULE:FREQ=WEEKLY;INTERVAL=2');
+  else if(r === 'monthly-date') lines.push('RRULE:FREQ=MONTHLY;BYMONTHDAY=' + base.getDate());
+  else if(r === 'monthly-nth') lines.push('RRULE:FREQ=MONTHLY;BYDAY=' + Math.ceil(base.getDate() / 7) + wd);
+  else if(r === 'first-third') lines.push('RRULE:FREQ=MONTHLY;BYDAY=1' + wd + ',3' + wd);
+  lines.push('SUMMARY:' + icsEsc(ev.title));
+  if(ev.place) lines.push('LOCATION:' + icsEsc(ev.place));
+  if(ev.notes) lines.push('DESCRIPTION:' + icsEsc(ev.notes));
+  lines.push('END:VEVENT', 'END:VCALENDAR');
+  return lines.join('\r\n');
+}
+function downloadFile(name, mime, text){
+  try{
+    var blob = new Blob([text], {type:mime});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+  }catch(e){ toast('Download didn\u2019t work on this browser'); }
+}
+function shareText(txt){
+  if(navigator.share){
+    navigator.share({text:txt}).catch(function(){});
+  } else if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){ toast('Copied — paste it anywhere'); }, function(){ toast(txt); });
+  } else {
+    toast(txt);
+  }
+}
+
+/* ---------- LOG ---------- */
+function typeByKey(k){
+  return logTypes.filter(function(t){ return t.k === k; })[0] || null;
+}
+function cnt(list){
+  var s = 0;
+  for(var i = 0; i < list.length; i++) s += (list[i].n || 1);
+  return s;
+}
+function monthEntries(){
+  var now = new Date();
+  var y = now.getFullYear(), m = now.getMonth();
+  return log.filter(function(en){
+    var d = new Date(en.ts);
+    return d.getFullYear() === y && d.getMonth() === m;
+  });
+}
+function monthName(){
+  return new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'});
+}
+function yearEntries(){
+  var y = new Date().getFullYear();
+  return log.filter(function(en){ return new Date(en.ts).getFullYear() === y; });
+}
+function tallyText(ents, label){
+  if(!ents.length) return 'My ' + label + ' civic actions: just getting started!';
+  var counts = {};
+  ents.forEach(function(en){
+    var key = en.l || en.k;
+    if(!counts[key]) counts[key] = {n:0, e:en.e || ''};
+    counts[key].n += (en.n || 1);
+  });
+  var bits = [];
+  for(var key in counts){ bits.push((counts[key].e ? counts[key].e + ' ' : '') + counts[key].n + ' ' + key.toLowerCase()); }
+  return 'My ' + label + ' civic actions: ' + bits.join(' · ') + ' — ' + cnt(ents) + ' total';
+}
+function monthSummaryText(){ return tallyText(monthEntries(), monthName()); }
+var MILESTONES = [1, 10, 25, 50, 100, 250, 500, 1000];
+var ENCOURAGE = [
+  'Showing up is most of the work.',
+  'Small actions stack.',
+  'The people who show up are the ones who decide.',
+  'One call is one more than none.',
+  'Democracy is a practice, not an event.',
+  'Somebody has to know the details. Might as well be you.',
+  'Every movement is mostly folding chairs and phone calls.',
+  'Local is where it actually happens.',
+  'Medina is bluer than you think.'
+];
+function dayOfYear(){
+  var now = new Date();
+  return Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+}
+function burst(x, y){
+  if(!MOTION_OK) return;
+  var colors = ['#2fbde8', '#7fd6f2', '#eef6fa'];
+  for(var i = 0; i < 8; i++){
+    var s = document.createElement('span');
+    s.className = 'spark';
+    var a = (Math.PI * 2) * (i / 8) + Math.random() * 0.6;
+    var dist = 26 + Math.random() * 22;
+    s.style.left = x + 'px'; s.style.top = y + 'px';
+    s.style.setProperty('--dx', (Math.cos(a) * dist) + 'px');
+    s.style.setProperty('--dy', (Math.sin(a) * dist) + 'px');
+    s.style.background = colors[i % 3];
+    document.body.appendChild(s);
+    (function(el){ setTimeout(function(){ el.remove(); }, 600); })(s);
+  }
+}
+function confetti(){
+  if(!MOTION_OK) return;
+  var colors = ['#2fbde8', '#7fd6f2', '#1b4965', '#eef6fa', '#7fd6f2'];
+  for(var i = 0; i < 60; i++){
+    var s = document.createElement('span');
+    s.className = 'confetti';
+    s.style.left = (Math.random() * 100) + 'vw';
+    s.style.background = colors[i % colors.length];
+    s.style.animationDuration = (1.4 + Math.random() * 0.9) + 's';
+    s.style.animationDelay = (Math.random() * 0.3) + 's';
+    document.body.appendChild(s);
+    (function(el){ setTimeout(function(){ el.remove(); }, 2800); })(s);
+  }
+}
+function celebrate(n){
+  confetti();
+  toast(n === 1
+    ? 'Your first action of ' + new Date().getFullYear() + '. It starts here.'
+    : '\uD83C\uDF89 That\u2019s ' + n + ' actions this year. Keep going.', 3500);
+}
+function updateLogNumbers(){
+  var ents = monthEntries();
+  $('mTitle').textContent = monthName();
+  var mTot = cnt(ents);
+  $('mTotal').textContent = mTot;
+  var counts = {};
+  ents.forEach(function(en){
+    var key = en.l || en.k;
+    if(!counts[key]) counts[key] = {n:0, e:en.e || ''};
+    counts[key].n += (en.n || 1);
+  });
+  var chtml = '';
+  for(var key in counts){
+    chtml += (counts[key].e ? counts[key].e + ' ' : '') + esc(key) + ' × ' + counts[key].n + '<br>';
+  }
+  $('mCounts').innerHTML = chtml || '<span style="opacity:.8">Tap a button below to log your first action.</span>';
+
+  var now = new Date();
+  var best = null;
+  for(var m = 0; m < now.getMonth(); m++){
+    var n = cnt(log.filter(function(en){
+      var d = new Date(en.ts);
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === m;
+    }));
+    if(n > 0 && (!best || n > best.n)) best = {m:m, n:n};
+  }
+  $('mBest').style.display = best ? '' : 'none';
+  if(best) $('mBest').textContent = 'Best month so far: ' +
+    new Date(now.getFullYear(), best.m, 1).toLocaleDateString('en-US', {month:'long'}) + ' · ' + best.n + ' actions';
+  $('mEnc').textContent = '\u201C' + ENCOURAGE[dayOfYear() % ENCOURAGE.length] + '\u201D';
+
+  var yents = yearEntries();
+  $('yTitle').textContent = now.getFullYear() + ' so far';
+  $('yTotal').textContent = cnt(yents);
+  var ycounts = {};
+  yents.forEach(function(en){
+    var key = en.l || en.k;
+    if(!ycounts[key]) ycounts[key] = {n:0, e:en.e || ''};
+    ycounts[key].n += (en.n || 1);
+  });
+  var yhtml = '';
+  for(var ykey in ycounts){ yhtml += (ycounts[ykey].e ? ycounts[ykey].e + ' ' : '') + esc(ykey) + ' × ' + ycounts[ykey].n + '<br>'; }
+  $('yCounts').innerHTML = yhtml || 'Everything you log builds toward this.';
+
+  logTypes.forEach(function(t){
+    var el = document.querySelector('[data-logk="' + t.k + '"] .lb-c');
+    if(el) el.textContent = cnt(ents.filter(function(en){ return en.k === t.k; })) + ' this month';
+  });
+
+  var target = Math.max(best ? best.n : 0, 10);
+  var pct = Math.min(1, mTot / target);
+  var C = 276.5;
+  var fg = $('ringFg');
+  if(fg) fg.style.strokeDashoffset = (C * (1 - pct)).toFixed(1);
+}
+function renderHistory(){
+  var hist = log.slice().sort(function(a,b){ return b.ts - a.ts; });
+  var shown = hist.slice(0, 40);
+  var hhtml = '';
+  shown.forEach(function(en){
+    hhtml += '<div class="histrow"><span>' + esc(en.e || '') + '</span><span>' + esc(en.l || en.k) +
+      ((en.n || 1) > 1 ? ' <b>× ' + (en.n || 1) + '</b>' : '') +
+      '</span><span style="color:var(--muted)">' + esc(niceTs(en.ts)) + '</span>' +
+      '<button class="hr-x" data-delh="' + esc(en.id) + '" aria-label="Delete entry">✕</button></div>';
+  });
+  if(!hist.length) hhtml = '<div class="ev-empty" style="padding:14px">No actions logged yet.</div>';
+  else if(hist.length > 40) hhtml += '<div class="histrow" style="color:var(--muted)">+ ' + (hist.length - 40) + ' older entries kept in your data</div>';
+  $('histCard').innerHTML = hhtml;
+  document.querySelectorAll('[data-delh]').forEach(function(b){
+    b.onclick = function(){
+      log = log.filter(function(en){ return en.id !== b.getAttribute('data-delh'); });
+      jSet(K_LOG, log); updateLogNumbers(); renderHistory();
+    };
+  });
+}
+function renderLog(){
+  var ghtml = '';
+  logTypes.forEach(function(t){
+    ghtml += '<div class="logbtn" data-logk="' + esc(t.k) + '">';
+    if(t.custom) ghtml += '<button class="lb-x" data-delt="' + esc(t.k) + '" aria-label="Remove type">✕</button>';
+    ghtml += '<div class="lb-e">' + esc(t.e) + '</div><div class="lb-l">' + esc(t.l) + '</div>';
+    ghtml += '<div class="lb-c"></div></div>';
+  });
+  $('logGrid').innerHTML = ghtml;
+
+  document.querySelectorAll('[data-logk]').forEach(function(b){
+    b.onclick = function(e2){
+      if(e2.target && e2.target.getAttribute && e2.target.getAttribute('data-delt')) return;
+      var t = typeByKey(b.getAttribute('data-logk'));
+      if(!t) return;
+      log.push({id:'a' + Date.now(), k:t.k, e:t.e, l:t.l, ts:Date.now()});
+      jSet(K_LOG, log);
+      if(MOTION_OK){
+        b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+        var r = b.getBoundingClientRect();
+        burst(r.left + r.width/2, r.top + r.height/2);
+      }
+      updateLogNumbers();
+      renderHistory();
+      var newId = log[log.length - 1].id;
+      var yc = cnt(yearEntries());
+      if(MILESTONES.indexOf(yc) > -1){
+        buzz([20, 40, 20]);
+        celebrate(yc);
+      } else {
+        buzz(12);
+          var nMo = cnt(monthEntries().filter(function(en){ return en.k === t.k; }));
+        toastAction(t.e + ' +1 ' + t.l + ' — ' + nMo + ' this month', 'Undo', function(){
+          log = log.filter(function(en){ return en.id !== newId; });
+          jSet(K_LOG, log);
+          updateLogNumbers();
+          renderHistory();
+        });
+      }
+    };
+  });
+  document.querySelectorAll('[data-delt]').forEach(function(b){
+    b.onclick = function(ev2){
+      ev2.stopPropagation();
+      var k = b.getAttribute('data-delt');
+      var t = typeByKey(k);
+      if(!t) return;
+      if(!confirm('Remove the "' + t.l + '" button? Your past entries stay in history.')) return;
+      logTypes = logTypes.filter(function(x){ return x.k !== k; });
+      jSet(K_TYPES, logTypes); renderLog(); toast('Removed');
+    };
+  });
+  updateLogNumbers();
+  renderHistory();
+}
+$('shareMonthBtn').onclick = function(){ shareText(monthSummaryText()); };
+$('shareYearBtn').onclick = function(){ shareText(tallyText(yearEntries(), '' + new Date().getFullYear())); };
+$('addTypeBtn').onclick = function(){
+  openModal(
+    '<h3>New action type</h3>' +
+    '<label>Emoji</label><input id="f-emoji" maxlength="4" placeholder="✊">' +
+    '<label>Name</label><input id="f-tname" placeholder="Letters to the editor">' +
+    '<div class="modal-row">' +
+      '<button class="abtn ghost" id="f-cancel">Cancel</button>' +
+      '<button class="abtn mail" id="f-save">Add</button>' +
+    '</div>'
+  );
+  $('f-cancel').onclick = closeModal;
+  $('f-save').onclick = function(){
+    var l = $('f-tname').value.trim();
+    if(!l){ toast('Give it a name first'); return; }
+    var e = $('f-emoji').value.trim() || '⭐';
+    logTypes.push({k:'c' + Date.now(), e:e, l:l, custom:true});
+    jSet(K_TYPES, logTypes); renderLog(); closeModal(); toast('Added');
+  };
+};
+
+/* ---------- modal plumbing ---------- */
+function openModal(html){
+  $('modalBox').innerHTML = html;
+  $('modalBg').classList.add('show');
+}
+function closeModal(){ $('modalBg').classList.remove('show'); }
+$('modalBg').addEventListener('click', function(e){ if(e.target === $('modalBg')) closeModal(); });
+
+/* ---------- rep modal ---------- */
+function openRepModal(id, secIdx){
+  var r = id ? (findRep(id) || {}).rep : {name:'',office:'',phone:'',email:'',web:'',notes:''};
+  if(!r) return;
+  openModal(
+    '<h3>' + (id ? 'Edit card' : 'New card') + '</h3>' +
+    '<label>Name</label><input id="f-name" value="' + esc(r.name) + '">' +
+    '<label>Office / role</label><input id="f-office" value="' + esc(r.office) + '">' +
+    '<label>Phone</label><input id="f-phone" inputmode="tel" value="' + esc(r.phone) + '">' +
+    '<label>Email</label><input id="f-email" inputmode="email" value="' + esc(r.email) + '">' +
+    '<label>Website</label><input id="f-web" inputmode="url" value="' + esc(r.web) + '">' +
+    '<label>My notes / talking points</label><textarea id="f-notes">' + esc(r.notes) + '</textarea>' +
+    '<div class="modal-row">' +
+      '<button class="abtn ghost" id="f-cancel">Cancel</button>' +
+      '<button class="abtn mail" id="f-save">Save</button>' +
+    '</div>' +
+    (id ? '<button class="del-link" id="f-del">Remove this card</button>' : '')
+  );
+  $('f-cancel').onclick = closeModal;
+  $('f-save').onclick = function(){
+    var vals = {
+      name: $('f-name').value.trim(), office: $('f-office').value.trim(),
+      phone: $('f-phone').value.trim(), email: $('f-email').value.trim(),
+      web: $('f-web').value.trim(), notes: $('f-notes').value.trim()
+    };
+    if(vals.web && !/^https?:\/\//i.test(vals.web)) vals.web = 'https://' + vals.web;
+    if(id){
+      var loc = findRep(id);
+      if(loc){
+        var keep = loc.rep;
+        for(var k in vals){ keep[k] = vals[k]; }
+        if(keep.name) delete keep.fillin;
+      }
+    } else {
+      vals.id = 'r' + Date.now();
+      reps[secIdx].items.push(vals);
+    }
+    jSet(K_REPS, reps); renderReps(); closeModal(); toast('Saved');
+  };
+  if(id){
+    $('f-del').onclick = function(){
+      if(!confirm('Remove this card?')) return;
+      var loc = findRep(id);
+      if(loc) reps[loc.sec].items.splice(loc.idx, 1);
+      jSet(K_REPS, reps); renderReps(); closeModal(); toast('Removed');
+    };
+  }
+}
+
+/* ---------- event modal ---------- */
+function openEventModal(id){
+  var ev = id ? events.filter(function(e){ return e.id === id; })[0] : {title:'',date:'',time:'',place:'',notes:'',repeat:'none'};
+  if(!ev) return;
+  var rsel = ev.repeat || 'none';
+  function opt(v, label){
+    return '<option value="' + v + '"' + (rsel === v ? ' selected' : '') + '>' + label + '</option>';
+  }
+  openModal(
+    '<h3>' + (id ? 'Edit event' : 'New event') + '</h3>' +
+    '<label>What is it?</label><input id="f-title" value="' + esc(ev.title) + '">' +
+    '<label>Date</label><input id="f-date" type="date" value="' + esc(ev.date) + '">' +
+    '<label>Time (optional)</label><input id="f-time" type="time" value="' + esc(ev.time) + '">' +
+    '<label>Repeats</label><select id="f-repeat">' +
+      opt('none', 'Doesn\u2019t repeat') +
+      opt('weekly', 'Every week') +
+      opt('biweekly', 'Every 2 weeks') +
+      opt('monthly-date', 'Monthly on this date') +
+      opt('monthly-nth', 'Monthly on this weekday (e.g. 3rd Tuesday)') +
+      opt('first-third', '1st & 3rd of this weekday (council-style)') +
+    '</select>' +
+    '<label>Where (optional)</label><input id="f-place" value="' + esc(ev.place) + '">' +
+    '<label>Notes (optional)</label><textarea id="f-notes">' + esc(ev.notes) + '</textarea>' +
+    '<div class="modal-row">' +
+      '<button class="abtn ghost" id="f-cancel">Cancel</button>' +
+      '<button class="abtn mail" id="f-save">Save</button>' +
+    '</div>' +
+    (id ? '<button class="del-link" id="f-del">Delete this event</button>' : '')
+  );
+  $('f-cancel').onclick = closeModal;
+  $('f-save').onclick = function(){
+    var title = $('f-title').value.trim();
+    if(!title){ toast('Give it a name first'); return; }
+    var rep = $('f-repeat').value;
+    var date = $('f-date').value;
+    if(rep !== 'none' && !date){ toast('A repeating event needs a starting date'); return; }
+    var vals = {
+      title:title, date:date, time:$('f-time').value,
+      place:$('f-place').value.trim(), notes:$('f-notes').value.trim(), repeat:rep
+    };
+    if(id){
+      var i = events.map(function(e){ return e.id; }).indexOf(id);
+      if(i >= 0){ vals.id = id; events[i] = vals; }
+    } else {
+      vals.id = 'e' + Date.now();
+      events.push(vals);
+    }
+    jSet(K_EVENTS, events); renderEvents(); closeModal(); toast('Saved');
+  };
+  if(id){
+    $('f-del').onclick = function(){
+      if(!confirm('Delete this event?')) return;
+      events = events.filter(function(e){ return e.id !== id; });
+      jSet(K_EVENTS, events); renderEvents(); closeModal(); toast('Deleted');
+    };
+  }
+}
+$('addEventBtn').onclick = function(){ openEventModal(null); };
+
+/* ---------- backup / restore ---------- */
+$('exportBtn').onclick = function(){
+  var data = {
+    app:'empower-compass', ver:VERSION, exported:new Date().toISOString(),
+    reps:reps, events:events, log:log, logTypes:logTypes, name:prefs.name || '',
+    plan:plan, scripts:scripts, sessions:sessions
+  };
+  try{
+    var blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    var d = new Date();
+    var stamp = d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+    a.download = 'empower-compass-backup-' + stamp + '.json';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+    toast('Backup saved to your downloads');
+  }catch(e){ toast('Could not save a backup on this browser'); }
+};
+$('importBtn').onclick = function(){ $('importFile').click(); };
+$('importFile').addEventListener('change', function(){
+  var f = this.files && this.files[0];
+  this.value = '';
+  if(!f) return;
+  var reader = new FileReader();
+  reader.onload = function(){
+    var data;
+    try{ data = JSON.parse(reader.result); }catch(e){ toast('That file isn\u2019t an Empower Compass backup'); return; }
+    if(!data || data.app !== 'empower-compass'){ toast('That file isn\u2019t an Empower Compass backup'); return; }
+    if(!confirm('Replace everything in this app with the backup from ' + (data.exported ? data.exported.slice(0,10) : 'that file') + '?')) return;
+    if(Array.isArray(data.reps)) reps = data.reps;
+    if(Array.isArray(data.events)) events = data.events;
+    if(Array.isArray(data.log)) log = data.log;
+    if(Array.isArray(data.logTypes)) logTypes = data.logTypes;
+    if(typeof data.name === 'string') prefs.name = data.name;
+    if(data.plan && data.plan.method){ plan = data.plan; jSet(K_PLAN, plan); }
+    if(Array.isArray(data.scripts)){ scripts = data.scripts; jSet(K_SCRIPTS, scripts); }
+    if(Array.isArray(data.sessions)){ sessions = data.sessions; jSet(K_SESS, sessions); }
+    prefs.seeded = true;
+    jSet(K_REPS, reps); jSet(K_EVENTS, events); jSet(K_LOG, log);
+    jSet(K_TYPES, logTypes); jSet(K_PREFS, prefs);
+    renderGreet(); renderReps(); renderEvents(); renderLog(); renderScripts(); renderPlan();
+    toast('Backup restored');
+  };
+  reader.onerror = function(){ toast('Could not read that file'); };
+  reader.readAsText(f);
+});
+
+/* ---------- settings ---------- */
+$('shareAppBtn').onclick = function(){
+  if(navigator.share){
+    navigator.share({title:'Empower Compass', url:APP_URL}).catch(function(){});
+  } else {
+    shareText(APP_URL);
+  }
+};
+$('nameBtn').onclick = function(){
+  var n = prompt('What should I call you?', prefs.name || '');
+  if(n === null) return;
+  prefs.name = n.trim(); jSet(K_PREFS, prefs); renderGreet();
+};
+$('resetRepsBtn').onclick = function(){
+  if(!confirm('Put all official cards back to the originals? Your edits will be lost.')) return;
+  reps = defaultReps(); jSet(K_REPS, reps); renderReps(); toast('Officials reset');
+};
+
+/* ---------- install hint ---------- */
+function isIOS(){ return /iPad|iPhone|iPod/.test(navigator.userAgent); }
+function installInstructions(){
+  return isIOS()
+    ? 'In Safari, tap the Share button (square with an arrow), then \u201CAdd to Home Screen.\u201D'
+    : 'In Chrome, tap the \u22EE menu in the top corner, then \u201CAdd to Home screen.\u201D';
+}
+function setupInstallBar(){
+  var standalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+  if(prefs.installDismissed || standalone) return;
+  $('installText').textContent = installInstructions();
+  $('installBar').classList.add('show');
+  $('installDismiss').onclick = function(){
+    prefs.installDismissed = true; jSet(K_PREFS, prefs);
+    $('installBar').classList.remove('show');
+  };
+}
+$('howInstallBtn').onclick = function(){ alert(installInstructions()); };
+
+/* ---------- actionable toast + haptics ---------- */
+function toastAction(msg, label, cb, ms){
+  var t = $('toast');
+  t.innerHTML = esc(msg) + '<button class="t-undo">' + esc(label) + '</button>';
+  t.classList.add('show', 'action');
+  t.querySelector('.t-undo').onclick = function(){
+    t.classList.remove('show', 'action');
+    cb();
+  };
+  clearTimeout(toast._t);
+  toast._t = setTimeout(function(){ t.classList.remove('show', 'action'); }, ms || 3200);
+}
+function buzz(pattern){
+  try{ if(navigator.vibrate) navigator.vibrate(pattern); }catch(e){}
+}
+
+/* ---------- voting plan ---------- */
+var plan = jGet(K_PLAN, null);
+var PLAN_METHODS = {
+  early:{t:'Early, in person', win:'Oct 6 \u2013 Nov 2 (last day ends 2 PM)'},
+  mail:{t:'By mail (absentee)', win:'Request by Oct 27 \u00b7 ballot must be RECEIVED by 7:30 PM Nov 3'},
+  eday:{t:'On Election Day', win:'Tue, Nov 3 \u00b7 polls open 6:30 AM \u2013 7:30 PM'}
+};
+var planDraft = null, planStep = 0;
+function renderPlan(){
+  var slot = $('planSlot');
+  if(!plan){
+    slot.innerHTML = '<div class="card plan-cta" id="planCta">' +
+      '<span class="lr-ic"><svg><use href="#i-ballot"></use></svg></span>' +
+      '<div class="pc-t">Make your voting plan</div>' +
+      '<div class="pc-s">One minute now, zero scrambling in November</div></div>';
+    $('planCta').onclick = function(){ openPlanWizard(); };
+    return;
+  }
+  var m = PLAN_METHODS[plan.method];
+  var html = '<div class="card plan-card">';
+  html += '<div class="rep-head"><div class="grow">';
+  html += '<div class="rep-name">My voting plan</div>';
+  html += '<div class="rep-office">' + esc(m.t) + '</div>';
+  html += '</div><button class="editpen" id="planEdit" aria-label="Edit plan">✎</button></div>';
+  if(plan.when) html += '<div class="plan-line"><b>When</b>' + esc(plan.when) + '</div>';
+  if(plan.method === 'early') html += '<div class="plan-line"><b>Where</b>Medina County Board of Elections</div>';
+  else if(plan.method === 'eday') html += '<div class="plan-line"><b>Where</b>' + (plan.place ? esc(plan.place) : '<a href="https://voterlookup.ohiosos.gov" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">Look up your polling place</a>') + '</div>';
+  if(plan.notes) html += '<div class="plan-line"><b>Notes</b>' + esc(plan.notes) + '</div>';
+  html += '<div class="plan-line"><b>Deadlines</b>' + esc(m.win) + '</div>';
+  if(plan.registered === 'unsure') html += '<div class="plan-line"><b>First</b><a href="https://voterlookup.ohiosos.gov" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">Check your registration</a> before Oct 5</div>';
+  html += '<div class="rep-actions"><button class="abtn ghost" id="planShare">↗ Share</button></div>';
+  html += '</div>';
+  slot.innerHTML = html;
+  $('planEdit').onclick = function(){ openPlanWizard(plan); };
+  $('planShare').onclick = function(){
+    var bits = ['My voting plan: ' + m.t.toLowerCase()];
+    if(plan.when) bits.push(plan.when);
+    if(plan.method === 'early') bits.push('Medina County Board of Elections');
+    if(plan.method === 'eday' && plan.place) bits.push(plan.place);
+    bits.push('Make yours: VoteOhio.gov');
+    shareText(bits.join(' \u2014 '));
+  };
+}
+function openPlanWizard(existing){
+  planDraft = existing ? JSON.parse(JSON.stringify(existing)) : {registered:'', method:'', when:'', place:'', notes:''};
+  planStep = 0;
+  renderPlanStep();
+}
+function pOpt(val, label, field){
+  var sel = planDraft[field] === val ? ' sel' : '';
+  return '<button class="opt' + sel + '" data-pv="' + val + '" data-pf="' + field + '">' + label + '</button>';
+}
+function renderPlanStep(){
+  var html = '';
+  if(planStep === 0){
+    html = '<h3>Are you registered at your current address?</h3>' +
+      pOpt('yes', 'Yes, I\u2019m registered', 'registered') +
+      pOpt('unsure', 'Not sure \u2014 I\u2019ll check', 'registered') +
+      '<div class="verify" style="text-align:left;margin-top:10px">Check in 30 seconds at <a href="https://voterlookup.ohiosos.gov" target="_blank" rel="noopener">voterlookup.ohiosos.gov</a>. Registration closes Oct 5.</div>';
+  } else if(planStep === 1){
+    html = '<h3>How will you vote?</h3>' +
+      pOpt('early', 'Early, in person', 'method') +
+      pOpt('mail', 'By mail (absentee)', 'method') +
+      pOpt('eday', 'On Election Day', 'method');
+  } else if(planStep === 2){
+    if(planDraft.method === 'early'){
+      html = '<h3>When will you go?</h3>' +
+        pOpt('The first day \u2014 Tue, Oct 6', 'The first day (Tue, Oct 6)', 'when') +
+        pOpt('A weekend in October', 'A weekend in October', 'when') +
+        pOpt('The last week (by Nov 2, 2 PM)', 'The last week (ends Nov 2, 2 PM)', 'when') +
+        '<div class="verify" style="text-align:left;margin-top:10px">Early voting happens at the Medina County Board of Elections.</div>';
+    } else if(planDraft.method === 'mail'){
+      html = '<h3>When will you send your request?</h3>' +
+        pOpt('Requesting my ballot this week', 'This week \u2014 get it done', 'when') +
+        pOpt('Requesting by early October', 'By early October', 'when') +
+        pOpt('Cutting it close \u2014 by Oct 27', 'Right before the Oct 27 deadline', 'when') +
+        '<div class="verify" style="text-align:left;margin-top:10px">Request forms: <a href="https://www.boe.ohio.gov/medina" target="_blank" rel="noopener">Medina County Board of Elections</a>. Your ballot must be RECEIVED by 7:30 PM on Nov 3.</div>';
+    } else {
+      html = '<h3>Election Day details</h3>' +
+        pOpt('Morning, before work', 'Morning (polls open 6:30 AM)', 'when') +
+        pOpt('Midday', 'Midday', 'when') +
+        pOpt('After work (by 7:30 PM)', 'After work (polls close 7:30 PM)', 'when') +
+        '<label>Your polling place (optional)</label><input id="pw-place" value="' + esc(planDraft.place) + '" placeholder="Look it up and paste it here">' +
+        '<div class="verify" style="text-align:left;margin-top:8px">Find it: <a href="https://voterlookup.ohiosos.gov" target="_blank" rel="noopener">voterlookup.ohiosos.gov</a></div>';
+    }
+  } else {
+    html = '<h3>Anything to arrange?</h3>' +
+      '<label>Notes (optional)</label><textarea id="pw-notes" placeholder="Ride, ID, time off, who\u2019s coming with you\u2026">' + esc(planDraft.notes) + '</textarea>';
+  }
+  var last = planStep === 3;
+  html += '<div class="modal-row">' +
+    '<button class="abtn ghost" id="pw-back">' + (planStep === 0 ? 'Cancel' : 'Back') + '</button>' +
+    '<button class="abtn mail" id="pw-next">' + (last ? 'Save my plan' : 'Next') + '</button>' +
+    '</div>';
+  if(plan && planStep === 0) html += '<button class="del-link" id="pw-del">Remove my plan</button>';
+  openModal(html);
+  document.querySelectorAll('[data-pv]').forEach(function(b){
+    b.onclick = function(){
+      planDraft[b.getAttribute('data-pf')] = b.getAttribute('data-pv');
+      renderPlanStep();
+    };
+  });
+  $('pw-back').onclick = function(){
+    if(planStep === 0){ closeModal(); return; }
+    if(planStep === 2 && $('pw-place')) planDraft.place = $('pw-place').value.trim();
+    if(planStep === 3 && $('pw-notes')) planDraft.notes = $('pw-notes').value.trim();
+    planStep--; renderPlanStep();
+  };
+  $('pw-next').onclick = function(){
+    if(planStep === 0 && !planDraft.registered){ toast('Pick one to keep going'); return; }
+    if(planStep === 1 && !planDraft.method){ toast('Pick one to keep going'); return; }
+    if(planStep === 2){
+      if($('pw-place')) planDraft.place = $('pw-place').value.trim();
+      if(!planDraft.when){ toast('Pick a time to keep going'); return; }
+    }
+    if(planStep === 3){
+      if($('pw-notes')) planDraft.notes = $('pw-notes').value.trim();
+      plan = planDraft;
+      plan.created = Date.now();
+      jSet(K_PLAN, plan);
+      closeModal(); renderPlan();
+      buzz(20);
+      toast('Plan saved. November-you says thanks.');
+      return;
+    }
+    planStep++;
+    renderPlanStep();
+  };
+  if(plan && planStep === 0 && $('pw-del')){
+    $('pw-del').onclick = function(){
+      if(!confirm('Remove your voting plan?')) return;
+      plan = null;
+      try{ localStorage.removeItem(K_PLAN); }catch(e){}
+      delete mem[K_PLAN];
+      closeModal(); renderPlan(); toast('Plan removed');
+    };
+  }
+}
+
+/* ---------- scripts & talking points ---------- */
+function defaultScripts(){
+  return [
+    {id:'s1', title:'At the door', body:'Hi! My name is ____ and I\u2019m a volunteer with ____.\n\nWe\u2019re out talking with neighbors about ____.\n\nIs that something that matters to you?\n\n(Listen. Really listen.)\n\nThank you so much for your time \u2014 have a great day!'},
+    {id:'s2', title:'Calling an office', body:'Hi, my name is ____ and I\u2019m a constituent from ____.\n\nI\u2019m calling about ____.\n\nI\u2019d like to ask that ____.\n\nCould you pass that along? Thank you!'}
+  ];
+}
+var scripts = jGet(K_SCRIPTS, null) || defaultScripts();
+function renderScripts(){
+  var html = '';
+  scripts.forEach(function(s){
+    html += '<div class="card script-card" data-sid="' + esc(s.id) + '">' +
+      '<div class="rep-head"><div class="grow">' +
+      '<div class="rep-name">' + esc(s.title) + '</div>' +
+      '<div class="script-prev">' + esc(s.body) + '</div>' +
+      '</div><span class="editpen">\u203A</span></div></div>';
+  });
+  if(!scripts.length) html = '<div class="card ev-empty" style="padding:16px">No scripts yet. Add the words you want in your pocket.</div>';
+  $('scriptList').innerHTML = html;
+  document.querySelectorAll('[data-sid]').forEach(function(c){
+    c.onclick = function(){ openScriptReader(c.getAttribute('data-sid')); };
+  });
+}
+function openScriptReader(id){
+  var s = scripts.filter(function(x){ return x.id === id; })[0];
+  if(!s) return;
+  openModal(
+    '<div class="rep-head"><div class="grow"><h3>' + esc(s.title) + '</h3></div>' +
+    '<button class="editpen" id="sr-edit" aria-label="Edit">✎</button></div>' +
+    '<div class="reader">' + esc(s.body) + '</div>' +
+    '<div class="modal-row">' +
+    '<button class="abtn ghost" id="sr-share">↗ Share</button>' +
+    '<button class="abtn mail" id="sr-close">Close</button></div>'
+  );
+  $('sr-close').onclick = closeModal;
+  $('sr-share').onclick = function(){ shareText(s.title + '\n\n' + s.body); };
+  $('sr-edit').onclick = function(){ openScriptEditor(id); };
+}
+function openScriptEditor(id){
+  var s = id ? scripts.filter(function(x){ return x.id === id; })[0] : {title:'', body:''};
+  if(!s) return;
+  openModal(
+    '<h3>' + (id ? 'Edit script' : 'New script') + '</h3>' +
+    '<label>Title</label><input id="sc-title" value="' + esc(s.title) + '">' +
+    '<label>The words</label><textarea id="sc-body" style="min-height:180px">' + esc(s.body) + '</textarea>' +
+    '<div class="modal-row">' +
+    '<button class="abtn ghost" id="sc-cancel">Cancel</button>' +
+    '<button class="abtn mail" id="sc-save">Save</button></div>' +
+    (id ? '<button class="del-link" id="sc-del">Delete this script</button>' : '')
+  );
+  $('sc-cancel').onclick = closeModal;
+  $('sc-save').onclick = function(){
+    var t = $('sc-title').value.trim();
+    if(!t){ toast('Give it a title first'); return; }
+    var b = $('sc-body').value;
+    if(id){
+      s.title = t; s.body = b;
+    } else {
+      scripts.push({id:'s' + Date.now(), title:t, body:b});
+    }
+    jSet(K_SCRIPTS, scripts); renderScripts(); closeModal(); toast('Saved');
+  };
+  if(id){
+    $('sc-del').onclick = function(){
+      if(!confirm('Delete "' + s.title + '"?')) return;
+      scripts = scripts.filter(function(x){ return x.id !== id; });
+      jSet(K_SCRIPTS, scripts); renderScripts(); closeModal(); toast('Deleted');
+    };
+  }
+}
+$('addScriptBtn').onclick = function(){ openScriptEditor(null); };
+
+/* ---------- canvass sessions ---------- */
+var SESS_COUNTERS = [
+  {k:'door', e:'🚪', l:'Doors knocked'},
+  {k:'convo', e:'💬', l:'Conversations'},
+  {k:'lit', e:'📄', l:'Lit dropped'},
+  {k:'nothome', e:'🏠', l:'Not home'}
+];
+var sessions = jGet(K_SESS, []);
+var sessActive = jGet(K_SESS_A, null);
+var sessTick = null;
+function sessCounterHtml(){
+  var html = '';
+  SESS_COUNTERS.forEach(function(c){
+    html += '<button class="sess-btn" data-sk="' + c.k + '">' +
+      '<span class="sb-m" role="button" tabindex="0" data-sm="' + c.k + '" aria-label="Minus one">−</span>' +
+      '<span class="sb-e">' + c.e + '</span>' +
+      '<span class="sb-n" id="sn-' + c.k + '">' + (sessActive.counts[c.k] || 0) + '</span>' +
+      '<span class="sb-l">' + c.l + '</span></button>';
+  });
+  return html;
+}
+function fmtDur(ms){
+  var s = Math.floor(ms / 1000);
+  var h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+  if(h) return h + 'h ' + (m < 10 ? '0' : '') + m + 'm';
+  return m + ':' + (s % 60 < 10 ? '0' : '') + (s % 60);
+}
+function sessTimerTick(){
+  if(!sessActive) return;
+  $('sessTimer').textContent = fmtDur(Date.now() - sessActive.start);
+}
+function openSession(){
+  $('sessLoc').textContent = sessActive.loc || 'Out in the field';
+  $('sessGrid').innerHTML = sessCounterHtml();
+  $('sessBg').classList.add('show');
+  sessTimerTick();
+  clearInterval(sessTick);
+  sessTick = setInterval(sessTimerTick, 1000);
+  document.querySelectorAll('[data-sk]').forEach(function(b){
+    b.onclick = function(e2){
+      if(e2.target && e2.target.getAttribute && e2.target.getAttribute('data-sm')) return;
+      var k = b.getAttribute('data-sk');
+      sessActive.counts[k] = (sessActive.counts[k] || 0) + 1;
+      jSet(K_SESS_A, sessActive);
+      $('sn-' + k).textContent = sessActive.counts[k];
+      buzz(12);
+      if(MOTION_OK){
+        var r = b.getBoundingClientRect();
+        burst(r.left + r.width/2, r.top + r.height/2);
+      }
+    };
+  });
+  document.querySelectorAll('[data-sm]').forEach(function(b){
+    b.onclick = function(e2){
+      e2.stopPropagation();
+      var k = b.getAttribute('data-sm');
+      if((sessActive.counts[k] || 0) > 0){
+        sessActive.counts[k]--;
+        jSet(K_SESS_A, sessActive);
+        $('sn-' + k).textContent = sessActive.counts[k];
+      }
+    };
+  });
+}
+$('sessStart').onclick = function(){
+  openModal(
+    '<h3>Start a canvass session</h3>' +
+    '<label>Where are you working? (optional)</label>' +
+    '<input id="ss-loc" placeholder="Brunswick, Medina square, Ward 3\u2026">' +
+    '<div class="verify" style="text-align:left;margin-top:8px">Big buttons, running timer, one tap per door. Your phone can stay in your pocket between houses.</div>' +
+    '<div class="modal-row">' +
+    '<button class="abtn ghost" id="ss-cancel">Cancel</button>' +
+    '<button class="abtn mail" id="ss-go">Start</button></div>'
+  );
+  $('ss-cancel').onclick = closeModal;
+  $('ss-go').onclick = function(){
+    sessActive = {start: Date.now(), loc: $('ss-loc').value.trim(), counts: {}};
+    jSet(K_SESS_A, sessActive);
+    closeModal();
+    openSession();
+  };
+};
+function sessSummaryText(rec){
+  var bits = ['Canvass session'];
+  if(rec.loc) bits.push(rec.loc);
+  bits.push(fmtDur(rec.end - rec.start));
+  var parts = [];
+  SESS_COUNTERS.forEach(function(c){
+    var n = rec.counts[c.k] || 0;
+    if(n) parts.push(n + ' ' + c.l.toLowerCase());
+  });
+  if(parts.length) bits.push(parts.join(' · '));
+  return bits.join(' — ');
+}
+$('sessEnd').onclick = function(){
+  var total = 0;
+  SESS_COUNTERS.forEach(function(c){ total += (sessActive.counts[c.k] || 0); });
+  var rec = {id:'sx' + Date.now(), start:sessActive.start, end:Date.now(), loc:sessActive.loc, counts:sessActive.counts};
+  openModal(
+    '<h3>Session summary</h3>' +
+    '<div class="reader" style="font-size:16px">' + esc(sessSummaryText(rec)) + '</div>' +
+    '<div class="modal-row">' +
+    '<button class="abtn ghost" id="se-back">Keep going</button>' +
+    '<button class="abtn mail" id="se-save">' + (total ? 'Save session' : 'Discard') + '</button></div>' +
+    (total ? '<button class="del-link" id="se-discard">Discard without saving</button>' : '')
+  );
+  $('se-back').onclick = closeModal;
+  function shutdown(){
+    sessActive = null;
+    try{ localStorage.removeItem(K_SESS_A); }catch(e){}
+    delete mem[K_SESS_A];
+    clearInterval(sessTick);
+    $('sessBg').classList.remove('show');
+    closeModal();
+  }
+  $('se-save').onclick = function(){
+    if(total){
+      sessions.push(rec);
+      jSet(K_SESS, sessions);
+      var before = cnt(yearEntries());
+      SESS_COUNTERS.forEach(function(c){
+        var n = rec.counts[c.k] || 0;
+        if(n) log.push({id:'a' + Date.now() + c.k, k:c.k, e:c.e, l:c.l, ts:rec.end, n:n});
+      });
+      jSet(K_LOG, log);
+      var after = cnt(yearEntries());
+      updateLogNumbers();
+      renderHistory();
+      var hit = null;
+      for(var i = 0; i < MILESTONES.length; i++){
+        if(MILESTONES[i] > before && MILESTONES[i] <= after) hit = MILESTONES[i];
+      }
+      shutdown();
+      if(hit){ buzz([20, 40, 20]); celebrate(hit); }
+      else {
+        buzz(20);
+        toastAction('Session saved — ' + after + ' actions this year', 'Share it', function(){ shareText(sessSummaryText(rec)); }, 4000);
+      }
+    } else {
+      shutdown();
+    }
+  };
+  if(total){
+    $('se-discard').onclick = function(){
+      if(!confirm('Throw this session away?')) return;
+      shutdown();
+    };
+  }
+};
+
+/* ---------- about ---------- */
+$('aboutBtn').onclick = function(){
+  openModal(
+    '<h3>About Empower Compass</h3>' +
+    '<div class="about-body">' +
+    '<p>Empower Compass is a volunteer companion app built for Democrats Empower Medina: election dates and deadlines, who represents you, canvassing sessions, scripts, and your own action log for Medina County, Ohio.</p>' +
+    '<p>It is an independent volunteer project \u2014 not an official publication of any government office or board of elections.</p>' +
+    '<p>Everything you enter stays on your phone. This app collects nothing, tracks nothing, and sends nothing anywhere. Sharing happens only when you tap Share.</p>' +
+    '<p>Dates and officials last verified ' + esc(DATA_VERIFIED) + ', from official sources: Ohio Secretary of State, Medina County Board of Elections, City of Wadsworth, and the Ohio General Assembly. Always confirm details at <a href="https://www.voteohio.gov" target="_blank" rel="noopener">VoteOhio.gov</a>.</p>' +
+    '<p>Reach the team at <a href="mailto:democratsempowermedina@gmail.com">democratsempowermedina@gmail.com</a> or <a href="https://empowermedina.com" target="_blank" rel="noopener">empowermedina.com</a>.</p>' +
+    '<p>Built on a framework that can be tailored to any city, county, or district.</p>' +
+    '<p class="a-cred">Built for Democrats Empower Medina by Mot Buchanan \u00b7 <a href="https://motbuchanan.com" target="_blank" rel="noopener">motbuchanan.com</a></p>' +
+    '</div>' +
+    '<div class="modal-row"><button class="abtn mail" id="ab-close">Close</button></div>'
+  );
+  $('ab-close').onclick = closeModal;
+};
+
+/* ---------- welcome tour ---------- */
+var TOUR = [
+  {tab:'dates', e:'🩵', t:'Welcome to Empower Compass', b:'Your pocket companion for Democrats Empower Medina: election dates, who represents you, your events, canvass sessions, and the actions you take. Everything lives on your phone \u2014 nothing is shared unless you share it.'},
+  {tab:'dates', e:'🗓', t:'Dates', b:'The countdown to Election Day, every deadline that matters, and one-tap links to check your registration or pull up your sample ballot.'},
+  {tab:'reps', e:'🏛', t:'Reps', b:'Cards for your city, county, state, and federal officials. Tap Call or Website to reach them. Tap the little pencil to edit any card or keep your own talking points. Two cards say \u201CFill me in\u201D — the pencil is how.'},
+  {tab:'events', e:'📌', t:'Events', b:'Keep meetings, rallies, and postcard nights here. Events can repeat — \u201C1st & 3rd Tuesday\u201D included — and Share drops one straight into any group chat.'},
+  {tab:'log', e:'✅', t:'Log', b:'Tap a button each time you make a call, write a postcard, or show up. Going door to door? Start a canvass session for big counters and a timer, and keep your scripts one tap away. Share your tally when the month\u2019s done.'},
+  {tab:'settings', e:'💾', t:'One last thing', b:'Save a backup now and then from this More tab — it keeps everything safe if you ever switch phones. You can replay this tour from here too. That\u2019s it — go get \u2019em.'}
+];
+var tourStep = 0;
+function renderTour(){
+  var s = TOUR[tourStep];
+  showPanel(s.tab);
+  $('tourE').textContent = s.e;
+  $('tourT').textContent = s.t;
+  $('tourB').textContent = s.b;
+  var dots = '';
+  for(var i=0;i<TOUR.length;i++) dots += '<span class="' + (i === tourStep ? 'on' : '') + '"></span>';
+  $('tourDots').innerHTML = dots;
+  $('tourBack').style.visibility = tourStep === 0 ? 'hidden' : 'visible';
+  $('tourNext').textContent = tourStep === TOUR.length - 1 ? 'Done' : 'Next';
+  $('tourSkip').style.visibility = tourStep === TOUR.length - 1 ? 'hidden' : 'visible';
+}
+function startTour(){
+  tourStep = 0;
+  $('tourBg').classList.add('show');
+  renderTour();
+}
+function endTour(){
+  $('tourBg').classList.remove('show');
+  prefs.tourDone = true; jSet(K_PREFS, prefs);
+  showPanel('dates');
+}
+$('tourNext').onclick = function(){
+  if(tourStep === TOUR.length - 1){ endTour(); return; }
+  tourStep++; renderTour();
+};
+$('tourBack').onclick = function(){ if(tourStep > 0){ tourStep--; renderTour(); } };
+$('tourSkip').onclick = endTour;
+$('tourAgainBtn').onclick = startTour;
+
+/* ---------- service worker (https only; no-op elsewhere) ---------- */
+try{
+  if('serviceWorker' in navigator && location.protocol === 'https:'){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  }
+}catch(e){}
+
+/* ---------- boot ---------- */
+applyTheme();
+renderGreet();
+$('verBadge').textContent = VERSION.split(' · ')[0];
+renderDates();
+renderPlan();
+renderScripts();
+renderReps();
+renderEvents();
+renderLog();
+setupInstallBar();
+setInterval(renderDates, 60000);
+if(sessActive) openSession();
+if(!prefs.tourDone) startTour();
+</script>
+</body>
+</html>
