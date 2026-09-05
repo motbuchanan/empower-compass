@@ -170,7 +170,7 @@ nav button{
 nav button .ic{font-size:21px;line-height:1}
 nav button.on{color:var(--accent);font-weight:700}
 body.dark nav button.on{color:#6fc9e8}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:40;align-items:flex-end;justify-content:center}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:90;align-items:flex-end;justify-content:center}
 .modal-bg.show{display:flex}
 .modal{
   background:var(--card);width:100%;max-width:640px;border-radius:18px 18px 0 0;
@@ -247,10 +247,15 @@ body.dark nav button.on{color:#6fc9e8}
 .sess-btn .sb-n{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:44px;font-weight:800;line-height:1;color:var(--gold)}
 .sess-btn .sb-l{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:13px;font-weight:600;opacity:.9}
 .sess-btn .sb-m{position:absolute;top:8px;right:10px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,.25);color:var(--accent-ink);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.sess-end{margin-top:14px;width:100%;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;font-weight:700;background:var(--gold);color:var(--gold-ink);border:none;border-radius:14px;padding:16px;cursor:pointer}
+.sess-end{position:relative;z-index:2;margin-top:14px;width:100%;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;font-weight:700;background:var(--gold);color:var(--gold-ink);border:none;border-radius:14px;padding:16px;cursor:pointer}
 .script-card{cursor:pointer}
 .script-prev{font-size:14px;color:var(--muted);margin-top:4px;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .reader{font-size:19px;line-height:1.75;white-space:pre-wrap}
+.city-pick{display:flex;gap:6px;margin-bottom:14px;background:var(--card);padding:5px;border-radius:14px;border:1px solid var(--line);box-shadow:var(--shadow)}
+.city-tab{flex:1;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:14px;font-weight:600;padding:10px 4px;border:none;border-radius:10px;background:transparent;color:var(--muted);cursor:pointer;transition:background .15s,color .15s}
+.city-tab.on{background:var(--accent);color:var(--accent-ink)}
+.card.flagged{border-color:var(--gold);border-style:dashed}
+.vflag{font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--gold-ink);background:var(--gold);display:inline-block;padding:3px 9px;border-radius:10px;margin-bottom:8px}
 .about-body{font-size:15px;line-height:1.65}
 .about-body p{margin-bottom:12px}
 .about-body .a-cred{font-style:italic;color:var(--muted);margin-top:16px}
@@ -324,7 +329,7 @@ body.dark .about-body a{color:#6fc9e8}
   </div>
   <div class="h-right">
     <button class="iconbtn" id="themeBtn" aria-label="Toggle theme">◐</button>
-    <span class="badge" id="verBadge">EM 1.0</span>
+    <span class="badge" id="verBadge">EM 1.1.1</span>
   </div>
 </header>
 
@@ -515,8 +520,8 @@ body.dark .about-body a{color:#6fc9e8}
 
 <script>
 'use strict';
-/* ============ Empower Compass (Democrats Empower Medina fork) · EM 1.0 · Aug 30 2026 ============ */
-var VERSION = 'EM 1.0 · Aug 30';
+/* ============ Empower Compass (Democrats Empower Medina fork) · EM 1.1 · Aug 30 2026 ============ */
+var VERSION = 'EM 1.1.1 · Sep 5';
 var DATA_VERIFIED = 'August 22, 2026';
 
 /* ---------- guarded storage ---------- */
@@ -550,7 +555,7 @@ function animateCount(el, target, ms){
 
 var K_REPS='em_v1_reps', K_EVENTS='em_v1_events', K_PREFS='em_v1_prefs',
     K_LOG='em_v1_log', K_TYPES='em_v1_logtypes', K_PLAN='em_v1_plan',
-    K_SCRIPTS='em_v1_scripts', K_SESS='em_v1_sessions', K_SESS_A='em_v1_sess_active';
+    K_SCRIPTS='em_v1_scripts', K_SESS='em_v1_sessions', K_SESS_A='em_v1_sess_active', K_CITY='em_v1_city';
 
 /* ---------- key dates (verified against Ohio SOS-sourced info, Jul 21 2026) ---------- */
 var KEY_DATES = [
@@ -563,31 +568,85 @@ var KEY_DATES = [
 var ELECTION_DAY = '2026-11-03';
 
 /* ---------- default officials (verified Jul 21 2026; every card editable) ---------- */
-function defaultReps(){
-  return [
-    {sec:'City of Wadsworth', items:[
-      {id:'r1', name:'Robin Laubaugh', office:'Mayor', phone:'330-335-1521', email:'', web:'https://www.wadsworthcity.com', notes:''},
-      {id:'r2', name:'Daniel Rospert', office:'Council President', phone:'330-335-2759', email:'', web:'https://www.wadsworthcity.com', notes:'Council meets 1st & 3rd Tuesdays. Clerk: 330-335-2759. Current council terms run Jan 2026 \u2013 Dec 2027.'},
-      {id:'r3', name:'Mike Reese', office:'Council · Ward 1', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
-      {id:'r4', name:'Jon Yurchiak', office:'Council · Ward 2', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
-      {id:'r5', name:'Jeanne Hines', office:'Council · Ward 3', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
-      {id:'r6', name:'Angela May', office:'Council · Ward 4', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
-      {id:'r7', name:'Berger · Maxwell · Stugmyer', office:'Council · At-Large (3 seats)', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:'Zach Berger, Chris Maxwell, Thomas Stugmyer'}
-    ]},
-    {sec:'Medina County', items:[
-      {id:'r8', name:'Board of Elections', office:'Voter records · ballots · precincts', phone:'', email:'', web:'https://www.boe.ohio.gov/medina', notes:'Early voting happens here.'}
-    ]},
-    {sec:'State of Ohio', items:[
-      {id:'r9', name:'Mike DeWine', office:'Governor (term-limited · seat on the Nov ballot)', phone:'', email:'', web:'https://governor.ohio.gov', notes:''},
-      {id:'r10', name:'Mark Romanchuk', office:'State Senator · District 22', phone:'', email:'', web:'https://www.ohiosenate.gov', notes:''},
-      {id:'r11', name:'Sharon Ray', office:'State Representative · District 66', phone:'614-466-8140', email:'', web:'https://www.ohiohouse.gov', notes:'Lives in Wadsworth. Not seeking re-election \u2014 this seat is open on the Nov 2026 ballot.'}
-    ]},
-    {sec:'Federal', items:[
-      {id:'r12', name:'Jon Husted', office:'U.S. Senator (seat on the Nov ballot)', phone:'202-224-3121', email:'', web:'https://www.senate.gov', notes:'Capitol switchboard — ask for the senator\u2019s office.'},
-      {id:'r13', name:'Bernie Moreno', office:'U.S. Senator', phone:'202-224-3121', email:'', web:'https://www.senate.gov', notes:'Capitol switchboard — ask for the senator\u2019s office.'},
-      {id:'r14', name:'Max Miller', office:'U.S. Representative · OH-7', phone:'202-224-3121', email:'', web:'https://www.house.gov', notes:'Capitol switchboard — ask for the representative\u2019s office.'}
-    ]}
-  ];
+/* =====================================================================
+   CITY & OFFICIAL DATA  —  Democrats Empower Medina
+   ---------------------------------------------------------------------
+   HOW TO UPDATE (no coding needed):
+   - Each city below is a block: name, then a list of officials.
+   - To fix a name/phone/email, edit the text between the quotes.
+   - "verify:true" shows a gold "Check this" flag on that card. Remove it
+     (delete  verify:true,  ) once your team has confirmed the info.
+   - "need:'...'" prints exactly what's missing. Fill the field, then
+     delete the need:'...' part.
+   - COUNTY, STATE, and FEDERAL blocks show for ALL cities — edit once.
+   - Save the file and re-upload it to GitHub. That's the whole update.
+   Last verified by Mot: Aug 30, 2026 (public sources; DEM team to confirm).
+   ===================================================================== */
+var CITIES = {
+  wadsworth: {
+    label: 'Wadsworth',
+    web: 'https://www.wadsworthcity.com',
+    officials: [
+      {id:'w-mayor', name:'Robin Laubaugh', office:'Mayor', phone:'330-335-1521', email:'', web:'https://www.wadsworthcity.com', notes:''},
+      {id:'w-pres', name:'Daniel Rospert', office:'Council President', phone:'330-335-2759', email:'', web:'https://www.wadsworthcity.com', notes:'Council meets 1st & 3rd Tuesdays. Clerk: 330-335-2759.'},
+      {id:'w-w1', name:'Mike Reese', office:'Council \u00b7 Ward 1', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
+      {id:'w-w2', name:'Jon Yurchiak', office:'Council \u00b7 Ward 2', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
+      {id:'w-w3', name:'Jeanne Hines', office:'Council \u00b7 Ward 3', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
+      {id:'w-w4', name:'Angela May', office:'Council \u00b7 Ward 4', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
+      {id:'w-al', name:'Berger \u00b7 Maxwell \u00b7 Stugmyer', office:'Council \u00b7 At-Large (3 seats)', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:'Zach Berger, Chris Maxwell, Thomas Stugmyer'}
+    ]
+  },
+  brunswick: {
+    label: 'Brunswick',
+    web: 'https://www.brunswick.oh.us',
+    officials: [
+      {id:'b-mayor', name:'Ron Falconi', office:'Mayor', phone:'330-220-8686', email:'rfalconi@brunswick.oh.us', web:'https://www.brunswick.oh.us/contact-the-city/', notes:'Brunswick council is officially nonpartisan. Confirm party framing with your team.', verify:true},
+      {id:'b-w1', name:'Mike Abella Jr.', office:'Council \u00b7 Ward 1', phone:'330-460-6209', email:'mabella@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:''},
+      {id:'b-w2', name:'Nick Hanek', office:'Council \u00b7 Ward 2 (Vice Mayor / President)', phone:'330-204-4103', email:'nhanek@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:''},
+      {id:'b-w3', name:'Nate Witsaman', office:'Council \u00b7 Ward 3', phone:'234-546-0755', email:'nwitsaman@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:''},
+      {id:'b-w4', name:'Keith A. Kuczma', office:'Council \u00b7 Ward 4', phone:'330-840-4865', email:'kkuczma@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:''},
+      {id:'b-al1', name:'Joe Delsanter', office:'Council \u00b7 At-Large (President Pro Tem)', phone:'330-635-8198', email:'jdelsanter@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:''},
+      {id:'b-al2', name:'Kristy Piper', office:'Council \u00b7 At-Large', phone:'', email:'kpiper@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:'Phone not listed on city site \u2014 add if your team has it.', need:'phone'},
+      {id:'b-al3', name:'Tim Smith', office:'Council \u00b7 At-Large', phone:'', email:'tsmith@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:'Phone not listed on city site \u2014 add if your team has it.', need:'phone'}
+    ]
+  },
+  medina: {
+    label: 'Medina',
+    web: 'https://medinaoh.org',
+    officials: [
+      {id:'m-mayor', name:'Jim Shields', office:'Mayor', phone:'330-722-9020', email:'', web:'https://medinaoh.org/city-hall/government/', notes:''},
+      {id:'m-pres', name:'John M. Coyne III', office:'Council President', phone:'', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:'', need:'phone or email'},
+      {id:'m-w1', name:'Chet Simmons', office:'Council \u00b7 Ward 1', phone:'', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:'', need:'phone or email'},
+      {id:'m-w2', name:'Dennis Simpson', office:'Council \u00b7 Ward 2', phone:'330-725-3302', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:''},
+      {id:'m-w3', name:'Regi Haire', office:'Council \u00b7 Ward 3', phone:'330-722-7471', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:''},
+      {id:'m-w4', name:'', office:'Council \u00b7 Ward 4', phone:'', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:'Ward 4 councilperson \u2014 add from your roster.', need:'name'},
+      {id:'m-al1', name:'Natalie DiSalvo', office:'Council \u00b7 At-Large', phone:'', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:'', need:'phone or email'},
+      {id:'m-al2', name:'', office:'Council \u00b7 At-Large (2nd seat)', phone:'', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:'Second at-large seat \u2014 add from your roster.', need:'name'}
+    ]
+  }
+};
+/* shown for EVERY city */
+var SHARED_SECTIONS = [
+  {sec:'Medina County', items:[
+    {id:'c-boe', name:'Board of Elections', office:'Voter records \u00b7 ballots \u00b7 precincts', phone:'330-722-9262', email:'', web:'https://boe.medinaco.org', notes:'Early voting happens here.'}
+  ]},
+  {sec:'State of Ohio', items:[
+    {id:'s-gov', name:'Mike DeWine', office:'Governor (term-limited \u00b7 seat on the Nov ballot)', phone:'', email:'', web:'https://governor.ohio.gov', notes:''},
+    {id:'s-sen22', name:'Mark Romanchuk', office:'State Senator \u00b7 District 22', phone:'', email:'', web:'https://www.ohiosenate.gov', notes:'', verify:true},
+    {id:'s-rep', name:'Sharon Ray', office:'State Representative \u00b7 District 66 (Wadsworth area)', phone:'614-466-8140', email:'', web:'https://www.ohiohouse.gov', notes:'Districts vary across the county \u2014 Brunswick/Medina may differ. Confirm each area\u2019s rep.', verify:true}
+  ]},
+  {sec:'Federal', items:[
+    {id:'f-sen1', name:'Jon Husted', office:'U.S. Senator (seat on the Nov ballot)', phone:'202-224-3121', email:'', web:'https://www.senate.gov', notes:'Capitol switchboard \u2014 ask for the senator\u2019s office.'},
+    {id:'f-sen2', name:'Bernie Moreno', office:'U.S. Senator', phone:'202-224-3121', email:'', web:'https://www.senate.gov', notes:'Capitol switchboard \u2014 ask for the senator\u2019s office.'},
+    {id:'f-rep', name:'Max Miller', office:'U.S. Representative \u00b7 OH-7', phone:'202-224-3121', email:'', web:'https://www.house.gov', notes:'Confirm the district for each city \u2014 the county spans more than one.', verify:true}
+  ]}
+];
+function deepClone(x){ return JSON.parse(JSON.stringify(x)); }
+function buildReps(cityKey){
+  var c = CITIES[cityKey] || CITIES.wadsworth;
+  var out = [{sec:'City of ' + c.label, items:deepClone(c.officials)}];
+  for(var i=0;i<SHARED_SECTIONS.length;i++) out.push(deepClone(SHARED_SECTIONS[i]));
+  return out;
 }
 function defaultLogTypes(){
   return [
@@ -599,7 +658,11 @@ function defaultLogTypes(){
 }
 
 /* ---------- state ---------- */
-var reps = jGet(K_REPS, null) || defaultReps();
+var cityKey = jGet(K_CITY, 'wadsworth');
+if(!CITIES[cityKey]) cityKey = 'wadsworth';
+var repsEdits = jGet(K_REPS, {});
+if(Array.isArray(repsEdits)) repsEdits = {};
+var reps = repsEdits[cityKey] || buildReps(cityKey);
 var events = jGet(K_EVENTS, []);
 var prefs = jGet(K_PREFS, {theme:'', name:'', installDismissed:false, seeded:false});
 var log = jGet(K_LOG, []);
@@ -807,6 +870,17 @@ function renderDates(){
 }
 
 /* ---------- REPS ---------- */
+function saveReps(){
+  repsEdits[cityKey] = reps;
+  jSet(K_REPS, repsEdits);
+}
+function switchCity(key){
+  if(!CITIES[key]) return;
+  cityKey = key;
+  jSet(K_CITY, key);
+  reps = repsEdits[cityKey] || buildReps(cityKey);
+  renderReps();
+}
 function findRep(id){
   for(var i=0;i<reps.length;i++){
     for(var j=0;j<reps[i].items.length;j++){
@@ -816,14 +890,20 @@ function findRep(id){
   return null;
 }
 function renderReps(){
-  var html = '';
+  var html = '<div class="city-pick" id="cityPick">';
+  ['wadsworth','brunswick','medina'].forEach(function(k){
+    html += '<button class="city-tab' + (k === cityKey ? ' on' : '') + '" data-city="' + k + '">' + esc(CITIES[k].label) + '</button>';
+  });
+  html += '</div>';
   reps.forEach(function(section, si){
     html += '<h2>' + esc(section.sec) + '</h2>';
     section.items.forEach(function(r){
-      var isFill = r.fillin && !r.name;
-      html += '<div class="card' + (isFill ? ' fillin' : '') + '">';
+      var flagged = r.verify || r.need;
+      html += '<div class="card' + (flagged ? ' flagged' : '') + '">';
+      if(r.verify) html += '<div class="vflag">⚠ Check this before launch</div>';
+      else if(r.need) html += '<div class="vflag">⚠ ' + esc(r.need.charAt(0).toUpperCase() + r.need.slice(1)) + ' needed</div>';
       html += '<div class="rep-head"><div class="grow">';
-      html += '<div class="rep-name">' + esc(r.name || 'Fill me in') + '</div>';
+      html += '<div class="rep-name">' + esc(r.name || (r.need ? '— ' + r.need + ' —' : 'Fill me in')) + '</div>';
       html += '<div class="rep-office">' + esc(r.office) + '</div>';
       html += '</div><button class="editpen" data-edit="' + esc(r.id) + '" aria-label="Edit">✎</button></div>';
       if(r.notes) html += '<div class="rep-notes">' + esc(r.notes) + '</div>';
@@ -843,6 +923,9 @@ function renderReps(){
   });
   document.querySelectorAll('[data-addsec]').forEach(function(b){
     b.onclick = function(){ openRepModal(null, +b.getAttribute('data-addsec')); };
+  });
+  document.querySelectorAll('[data-city]').forEach(function(b){
+    b.onclick = function(){ switchCity(b.getAttribute('data-city')); };
   });
 }
 
@@ -1273,20 +1356,20 @@ function openRepModal(id, secIdx){
       if(loc){
         var keep = loc.rep;
         for(var k in vals){ keep[k] = vals[k]; }
-        if(keep.name) delete keep.fillin;
+        if(keep.name){ delete keep.fillin; delete keep.need; delete keep.verify; }
       }
     } else {
       vals.id = 'r' + Date.now();
       reps[secIdx].items.push(vals);
     }
-    jSet(K_REPS, reps); renderReps(); closeModal(); toast('Saved');
+    saveReps(); renderReps(); closeModal(); toast('Saved');
   };
   if(id){
     $('f-del').onclick = function(){
       if(!confirm('Remove this card?')) return;
       var loc = findRep(id);
       if(loc) reps[loc.sec].items.splice(loc.idx, 1);
-      jSet(K_REPS, reps); renderReps(); closeModal(); toast('Removed');
+      saveReps(); renderReps(); closeModal(); toast('Removed');
     };
   }
 }
@@ -1354,7 +1437,7 @@ $('addEventBtn').onclick = function(){ openEventModal(null); };
 $('exportBtn').onclick = function(){
   var data = {
     app:'empower-compass', ver:VERSION, exported:new Date().toISOString(),
-    reps:reps, events:events, log:log, logTypes:logTypes, name:prefs.name || '',
+    reps:repsEdits, cityKey:cityKey, events:events, log:log, logTypes:logTypes, name:prefs.name || '',
     plan:plan, scripts:scripts, sessions:sessions
   };
   try{
@@ -1380,7 +1463,9 @@ $('importFile').addEventListener('change', function(){
     try{ data = JSON.parse(reader.result); }catch(e){ toast('That file isn\u2019t an Empower Compass backup'); return; }
     if(!data || data.app !== 'empower-compass'){ toast('That file isn\u2019t an Empower Compass backup'); return; }
     if(!confirm('Replace everything in this app with the backup from ' + (data.exported ? data.exported.slice(0,10) : 'that file') + '?')) return;
-    if(Array.isArray(data.reps)) reps = data.reps;
+    if(data.reps && !Array.isArray(data.reps)){ repsEdits = data.reps; }
+    if(data.cityKey && CITIES[data.cityKey]){ cityKey = data.cityKey; jSet(K_CITY, cityKey); }
+    reps = repsEdits[cityKey] || buildReps(cityKey);
     if(Array.isArray(data.events)) events = data.events;
     if(Array.isArray(data.log)) log = data.log;
     if(Array.isArray(data.logTypes)) logTypes = data.logTypes;
@@ -1389,7 +1474,7 @@ $('importFile').addEventListener('change', function(){
     if(Array.isArray(data.scripts)){ scripts = data.scripts; jSet(K_SCRIPTS, scripts); }
     if(Array.isArray(data.sessions)){ sessions = data.sessions; jSet(K_SESS, sessions); }
     prefs.seeded = true;
-    jSet(K_REPS, reps); jSet(K_EVENTS, events); jSet(K_LOG, log);
+    jSet(K_REPS, repsEdits); jSet(K_EVENTS, events); jSet(K_LOG, log);
     jSet(K_TYPES, logTypes); jSet(K_PREFS, prefs);
     renderGreet(); renderReps(); renderEvents(); renderLog(); renderScripts(); renderPlan();
     toast('Backup restored');
@@ -1413,7 +1498,7 @@ $('nameBtn').onclick = function(){
 };
 $('resetRepsBtn').onclick = function(){
   if(!confirm('Put all official cards back to the originals? Your edits will be lost.')) return;
-  reps = defaultReps(); jSet(K_REPS, reps); renderReps(); toast('Officials reset');
+  reps = buildReps(cityKey); repsEdits[cityKey] = reps; jSet(K_REPS, repsEdits); renderReps(); toast(CITIES[cityKey].label + ' officials reset');
 };
 
 /* ---------- install hint ---------- */
@@ -1671,6 +1756,9 @@ var SESS_COUNTERS = [
 ];
 var sessions = jGet(K_SESS, []);
 var sessActive = jGet(K_SESS_A, null);
+if(sessActive && (typeof sessActive.counts !== 'object' || sessActive.counts === null || Array.isArray(sessActive.counts))){
+  sessActive.counts = {};
+}
 var sessTick = null;
 function sessCounterHtml(){
   var html = '';
@@ -1678,7 +1766,7 @@ function sessCounterHtml(){
     html += '<button class="sess-btn" data-sk="' + c.k + '">' +
       '<span class="sb-m" role="button" tabindex="0" data-sm="' + c.k + '" aria-label="Minus one">−</span>' +
       '<span class="sb-e">' + c.e + '</span>' +
-      '<span class="sb-n" id="sn-' + c.k + '">' + (sessActive.counts[c.k] || 0) + '</span>' +
+      '<span class="sb-n" id="sn-' + c.k + '">' + ((sessActive.counts && sessActive.counts[c.k]) || 0) + '</span>' +
       '<span class="sb-l">' + c.l + '</span></button>';
   });
   return html;
@@ -1694,6 +1782,8 @@ function sessTimerTick(){
   $('sessTimer').textContent = fmtDur(Date.now() - sessActive.start);
 }
 function openSession(){
+  if(!sessActive){ $('sessBg').classList.remove('show'); return; }
+  if(typeof sessActive.counts !== 'object' || !sessActive.counts){ sessActive.counts = {}; }
   $('sessLoc').textContent = sessActive.loc || 'Out in the field';
   $('sessGrid').innerHTML = sessCounterHtml();
   $('sessBg').classList.add('show');
@@ -1704,6 +1794,7 @@ function openSession(){
     b.onclick = function(e2){
       if(e2.target && e2.target.getAttribute && e2.target.getAttribute('data-sm')) return;
       var k = b.getAttribute('data-sk');
+      if(!sessActive.counts) sessActive.counts = {};
       sessActive.counts[k] = (sessActive.counts[k] || 0) + 1;
       jSet(K_SESS_A, sessActive);
       $('sn-' + k).textContent = sessActive.counts[k];
@@ -1730,7 +1821,7 @@ $('sessStart').onclick = function(){
   openModal(
     '<h3>Start a canvass session</h3>' +
     '<label>Where are you working? (optional)</label>' +
-    '<input id="ss-loc" placeholder="Brunswick, Medina square, Ward 3\u2026">' +
+    '<input id="ss-loc" value="' + esc(CITIES[cityKey].label) + '" placeholder="Brunswick, Medina square, Ward 3\u2026">' +
     '<div class="verify" style="text-align:left;margin-top:8px">Big buttons, running timer, one tap per door. Your phone can stay in your pocket between houses.</div>' +
     '<div class="modal-row">' +
     '<button class="abtn ghost" id="ss-cancel">Cancel</button>' +
@@ -1738,7 +1829,7 @@ $('sessStart').onclick = function(){
   );
   $('ss-cancel').onclick = closeModal;
   $('ss-go').onclick = function(){
-    sessActive = {start: Date.now(), loc: $('ss-loc').value.trim(), counts: {}};
+    sessActive = {start: Date.now(), loc: $('ss-loc').value.trim() || CITIES[cityKey].label, counts: {}};
     jSet(K_SESS_A, sessActive);
     closeModal();
     openSession();
@@ -1757,8 +1848,32 @@ function sessSummaryText(rec){
   return bits.join(' — ');
 }
 $('sessEnd').onclick = function(){
+  // hard-safety: if state is broken, force-exit rather than trap the user
+  if(!sessActive || typeof sessActive.counts !== 'object' || !sessActive.counts){
+    sessActive = null;
+    try{ localStorage.removeItem(K_SESS_A); }catch(e){}
+    delete mem[K_SESS_A];
+    try{ clearInterval(sessTick); }catch(e){}
+    $('sessBg').classList.remove('show');
+    closeModal();
+    toast('Session ended');
+    return;
+  }
+  if(!sessActive){ $('sessBg').classList.remove('show'); closeModal(); return; }
+  if(!sessActive.counts) sessActive.counts = {};
   var total = 0;
   SESS_COUNTERS.forEach(function(c){ total += (sessActive.counts[c.k] || 0); });
+  // Nothing logged? Just exit — no summary sheet to get lost on.
+  if(!total){
+    sessActive = null;
+    try{ localStorage.removeItem(K_SESS_A); }catch(e){}
+    delete mem[K_SESS_A];
+    try{ clearInterval(sessTick); }catch(e){}
+    $('sessBg').classList.remove('show');
+    closeModal();
+    toast('Session ended');
+    return;
+  }
   var rec = {id:'sx' + Date.now(), start:sessActive.start, end:Date.now(), loc:sessActive.loc, counts:sessActive.counts};
   openModal(
     '<h3>Session summary</h3>' +
@@ -1834,7 +1949,7 @@ $('aboutBtn').onclick = function(){
 var TOUR = [
   {tab:'dates', e:'🩵', t:'Welcome to Empower Compass', b:'Your pocket companion for Democrats Empower Medina: election dates, who represents you, your events, canvass sessions, and the actions you take. Everything lives on your phone \u2014 nothing is shared unless you share it.'},
   {tab:'dates', e:'🗓', t:'Dates', b:'The countdown to Election Day, every deadline that matters, and one-tap links to check your registration or pull up your sample ballot.'},
-  {tab:'reps', e:'🏛', t:'Reps', b:'Cards for your city, county, state, and federal officials. Tap Call or Website to reach them. Tap the little pencil to edit any card or keep your own talking points. Two cards say \u201CFill me in\u201D — the pencil is how.'},
+  {tab:'reps', e:'🏛', t:'Reps', b:'Pick your city up top \u2014 Brunswick, Medina, or Wadsworth \u2014 and the officials swap. County, state, and federal show for everyone. Cards with a gold flag need your team to confirm or fill something. Tap the pencil to edit any card.'},
   {tab:'events', e:'📌', t:'Events', b:'Keep meetings, rallies, and postcard nights here. Events can repeat — \u201C1st & 3rd Tuesday\u201D included — and Share drops one straight into any group chat.'},
   {tab:'log', e:'✅', t:'Log', b:'Tap a button each time you make a call, write a postcard, or show up. Going door to door? Start a canvass session for big counters and a timer, and keep your scripts one tap away. Share your tally when the month\u2019s done.'},
   {tab:'settings', e:'💾', t:'One last thing', b:'Save a backup now and then from this More tab — it keeps everything safe if you ever switch phones. You can replay this tour from here too. That\u2019s it — go get \u2019em.'}
@@ -1890,7 +2005,7 @@ renderEvents();
 renderLog();
 setupInstallBar();
 setInterval(renderDates, 60000);
-if(sessActive) openSession();
+if(sessActive){ try{ openSession(); }catch(e){ try{ localStorage.removeItem(K_SESS_A); }catch(e2){} sessActive=null; var sb=document.getElementById('sessBg'); if(sb) sb.classList.remove('show'); } }
 if(!prefs.tourDone) startTour();
 </script>
 </body>
