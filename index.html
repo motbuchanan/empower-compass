@@ -329,7 +329,7 @@ body.dark .about-body a{color:#6fc9e8}
   </div>
   <div class="h-right">
     <button class="iconbtn" id="themeBtn" aria-label="Toggle theme">◐</button>
-    <span class="badge" id="verBadge">EM 1.1.1</span>
+    <span class="badge" id="verBadge">EM 1.2</span>
   </div>
 </header>
 
@@ -449,6 +449,10 @@ body.dark .about-body a{color:#6fc9e8}
         <button class="abtn ghost" id="howInstallBtn">Show</button>
       </div>
       <div class="set-row">
+        <div>Found a problem?<div class="sub">This app is still growing — tell us what broke</div></div>
+        <button class="abtn ghost" id="bugBtn">Report</button>
+      </div>
+      <div class="set-row">
         <div>About Empower Compass<div class="sub">What this is and who made it</div></div>
         <button class="abtn ghost" id="aboutBtn">View</button>
       </div>
@@ -521,8 +525,8 @@ body.dark .about-body a{color:#6fc9e8}
 <script>
 'use strict';
 /* ============ Empower Compass (Democrats Empower Medina fork) · EM 1.1 · Aug 30 2026 ============ */
-var VERSION = 'EM 1.1.1 · Sep 5';
-var DATA_VERIFIED = 'August 22, 2026';
+var VERSION = 'EM 1.2 · Sep 13';
+var DATA_VERIFIED = 'September 13, 2026';
 
 /* ---------- guarded storage ---------- */
 var mem = {};
@@ -580,7 +584,8 @@ var ELECTION_DAY = '2026-11-03';
      delete the need:'...' part.
    - COUNTY, STATE, and FEDERAL blocks show for ALL cities — edit once.
    - Save the file and re-upload it to GitHub. That's the whole update.
-   Last verified by Mot: Aug 30, 2026 (public sources; DEM team to confirm).
+   Last verified: Sep 13, 2026 from each city's official website (medinaoh.org,
+   brunswick.oh.us, wadsworthcity.com). Medina fully sourced incl. all phones.
    ===================================================================== */
 var CITIES = {
   wadsworth: {
@@ -600,28 +605,28 @@ var CITIES = {
     label: 'Brunswick',
     web: 'https://www.brunswick.oh.us',
     officials: [
-      {id:'b-mayor', name:'Ron Falconi', office:'Mayor', phone:'330-220-8686', email:'rfalconi@brunswick.oh.us', web:'https://www.brunswick.oh.us/contact-the-city/', notes:'Brunswick council is officially nonpartisan. Confirm party framing with your team.', verify:true},
+      {id:'b-mayor', name:'Ron Falconi', office:'Mayor', phone:'330-220-8686', email:'rfalconi@brunswick.oh.us', web:'https://www.brunswick.oh.us/contact-the-city/', notes:'Brunswick city council is officially nonpartisan.'},
       {id:'b-w1', name:'Mike Abella Jr.', office:'Council \u00b7 Ward 1', phone:'330-460-6209', email:'mabella@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:''},
       {id:'b-w2', name:'Nick Hanek', office:'Council \u00b7 Ward 2 (Vice Mayor / President)', phone:'330-204-4103', email:'nhanek@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:''},
       {id:'b-w3', name:'Nate Witsaman', office:'Council \u00b7 Ward 3', phone:'234-546-0755', email:'nwitsaman@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:''},
       {id:'b-w4', name:'Keith A. Kuczma', office:'Council \u00b7 Ward 4', phone:'330-840-4865', email:'kkuczma@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:''},
       {id:'b-al1', name:'Joe Delsanter', office:'Council \u00b7 At-Large (President Pro Tem)', phone:'330-635-8198', email:'jdelsanter@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:''},
-      {id:'b-al2', name:'Kristy Piper', office:'Council \u00b7 At-Large', phone:'', email:'kpiper@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:'Phone not listed on city site \u2014 add if your team has it.', need:'phone'},
-      {id:'b-al3', name:'Tim Smith', office:'Council \u00b7 At-Large', phone:'', email:'tsmith@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:'Phone not listed on city site \u2014 add if your team has it.', need:'phone'}
+      {id:'b-al2', name:'Kristy Piper', office:'Council \u00b7 At-Large', phone:'', email:'kpiper@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:''},
+      {id:'b-al3', name:'Tim Smith', office:'Council \u00b7 At-Large', phone:'', email:'tsmith@brunswick.oh.us', web:'https://www.brunswick.oh.us/city-council/', notes:''}
     ]
   },
   medina: {
     label: 'Medina',
     web: 'https://medinaoh.org',
     officials: [
-      {id:'m-mayor', name:'Jim Shields', office:'Mayor', phone:'330-722-9020', email:'', web:'https://medinaoh.org/city-hall/government/', notes:''},
-      {id:'m-pres', name:'John M. Coyne III', office:'Council President', phone:'', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:'', need:'phone or email'},
-      {id:'m-w1', name:'Chet Simmons', office:'Council \u00b7 Ward 1', phone:'', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:'', need:'phone or email'},
-      {id:'m-w2', name:'Dennis Simpson', office:'Council \u00b7 Ward 2', phone:'330-725-3302', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:''},
-      {id:'m-w3', name:'Regi Haire', office:'Council \u00b7 Ward 3', phone:'330-722-7471', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:''},
-      {id:'m-w4', name:'', office:'Council \u00b7 Ward 4', phone:'', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:'Ward 4 councilperson \u2014 add from your roster.', need:'name'},
-      {id:'m-al1', name:'Natalie DiSalvo', office:'Council \u00b7 At-Large', phone:'', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:'', need:'phone or email'},
-      {id:'m-al2', name:'', office:'Council \u00b7 At-Large (2nd seat)', phone:'', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:'Second at-large seat \u2014 add from your roster.', need:'name'}
+      {id:'m-mayor', name:'Jim Shields', office:'Mayor', phone:'330-722-9020', email:'', web:'https://medinaoh.org/city-hall/administration-mayor/', notes:''},
+      {id:'m-pres', name:'John M. Coyne III', office:'Council President', phone:'330-723-9998', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:'On council since 1998. Office: 330-849-6677.'},
+      {id:'m-w1', name:'Chet Simmons', office:'Council \u00b7 Ward 1', phone:'330-321-2165', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:''},
+      {id:'m-w2', name:'Dennie R. Simpson', office:'Council \u00b7 Ward 2', phone:'330-725-3302', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:''},
+      {id:'m-w3', name:'Regi Haire', office:'Council \u00b7 Ward 3', phone:'330-722-7471', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:'Council President Pro-tem.'},
+      {id:'m-w4', name:'Bill Lamb', office:'Council \u00b7 Ward 4', phone:'330-421-5829', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:''},
+      {id:'m-al1', name:'Natalie Harjar-DiSalvo', office:'Council \u00b7 At-Large', phone:'330-353-8279', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:''},
+      {id:'m-al2', name:'Ed Isabella', office:'Council \u00b7 At-Large', phone:'330-321-4960', email:'', web:'https://medinaoh.org/city-hall/city-council/', notes:''}
     ]
   }
 };
@@ -632,13 +637,13 @@ var SHARED_SECTIONS = [
   ]},
   {sec:'State of Ohio', items:[
     {id:'s-gov', name:'Mike DeWine', office:'Governor (term-limited \u00b7 seat on the Nov ballot)', phone:'', email:'', web:'https://governor.ohio.gov', notes:''},
-    {id:'s-sen22', name:'Mark Romanchuk', office:'State Senator \u00b7 District 22', phone:'', email:'', web:'https://www.ohiosenate.gov', notes:'', verify:true},
-    {id:'s-rep', name:'Sharon Ray', office:'State Representative \u00b7 District 66 (Wadsworth area)', phone:'614-466-8140', email:'', web:'https://www.ohiohouse.gov', notes:'Districts vary across the county \u2014 Brunswick/Medina may differ. Confirm each area\u2019s rep.', verify:true}
+    {id:'s-sen22', name:'Mark Romanchuk', office:'State Senator \u00b7 District 22', phone:'', email:'', web:'https://www.ohiosenate.gov', notes:'District 22 covers all of Medina County.'},
+    {id:'s-rep', name:'Sharon Ray', office:'State Representative \u00b7 District 66', phone:'614-466-8140', email:'', web:'https://www.ohiohouse.gov', notes:'Not seeking re-election \u2014 this seat is open on the Nov 2026 ballot. District 66 covers most of Medina County; confirm yours at ohiohouse.gov.'}
   ]},
   {sec:'Federal', items:[
     {id:'f-sen1', name:'Jon Husted', office:'U.S. Senator (seat on the Nov ballot)', phone:'202-224-3121', email:'', web:'https://www.senate.gov', notes:'Capitol switchboard \u2014 ask for the senator\u2019s office.'},
     {id:'f-sen2', name:'Bernie Moreno', office:'U.S. Senator', phone:'202-224-3121', email:'', web:'https://www.senate.gov', notes:'Capitol switchboard \u2014 ask for the senator\u2019s office.'},
-    {id:'f-rep', name:'Max Miller', office:'U.S. Representative \u00b7 OH-7', phone:'202-224-3121', email:'', web:'https://www.house.gov', notes:'Confirm the district for each city \u2014 the county spans more than one.', verify:true}
+    {id:'f-rep', name:'Max Miller', office:'U.S. Representative \u00b7 OH-7', phone:'202-224-3121', email:'', web:'https://www.house.gov', notes:'Capitol switchboard \u2014 ask for the representative\u2019s office. Confirm your district at house.gov.'}
   ]}
 ];
 function deepClone(x){ return JSON.parse(JSON.stringify(x)); }
@@ -900,10 +905,10 @@ function renderReps(){
     section.items.forEach(function(r){
       var flagged = r.verify || r.need;
       html += '<div class="card' + (flagged ? ' flagged' : '') + '">';
-      if(r.verify) html += '<div class="vflag">⚠ Check this before launch</div>';
-      else if(r.need) html += '<div class="vflag">⚠ ' + esc(r.need.charAt(0).toUpperCase() + r.need.slice(1)) + ' needed</div>';
+      if(r.verify || r.need) html += '<div class="vflag">Being updated</div>';
+
       html += '<div class="rep-head"><div class="grow">';
-      html += '<div class="rep-name">' + esc(r.name || (r.need ? '— ' + r.need + ' —' : 'Fill me in')) + '</div>';
+      html += '<div class="rep-name">' + esc(r.name || 'Coming soon') + '</div>';
       html += '<div class="rep-office">' + esc(r.office) + '</div>';
       html += '</div><button class="editpen" data-edit="' + esc(r.id) + '" aria-label="Edit">✎</button></div>';
       if(r.notes) html += '<div class="rep-notes">' + esc(r.notes) + '</div>';
@@ -1927,13 +1932,26 @@ $('sessEnd').onclick = function(){
   }
 };
 
+/* ---------- report a problem ---------- */
+$('bugBtn').onclick = function(){
+  var body = 'What happened?\n\n\n\nWhat were you doing right before?\n\n\n\n' +
+    '--- (leave this part, it helps) ---\n' +
+    'App: Empower Compass ' + VERSION + '\n' +
+    'Device: ' + (navigator.userAgent || '') + '\n' +
+    'Screen: ' + (window.innerWidth || '?') + 'x' + (window.innerHeight || '?') + '\n';
+  var href = 'mailto:democratsempowermedina@gmail.com' +
+    '?subject=' + encodeURIComponent('Empower Compass \u2014 something broke') +
+    '&body=' + encodeURIComponent(body);
+  window.location.href = href;
+};
+
 /* ---------- about ---------- */
 $('aboutBtn').onclick = function(){
   openModal(
     '<h3>About Empower Compass</h3>' +
     '<div class="about-body">' +
     '<p>Empower Compass is a volunteer companion app built for Democrats Empower Medina: election dates and deadlines, who represents you, canvassing sessions, scripts, and your own action log for Medina County, Ohio.</p>' +
-    '<p>It is an independent volunteer project \u2014 not an official publication of any government office or board of elections.</p>' +
+    '<p>It is an independent volunteer project \u2014 not an official publication of any government office or board of elections. It is actively being improved; if something breaks, use \u201CFound a problem?\u201D on the More tab and it will get fixed.</p>' +
     '<p>Everything you enter stays on your phone. This app collects nothing, tracks nothing, and sends nothing anywhere. Sharing happens only when you tap Share.</p>' +
     '<p>Dates and officials last verified ' + esc(DATA_VERIFIED) + ', from official sources: Ohio Secretary of State, Medina County Board of Elections, City of Wadsworth, and the Ohio General Assembly. Always confirm details at <a href="https://www.voteohio.gov" target="_blank" rel="noopener">VoteOhio.gov</a>.</p>' +
     '<p>Reach the team at <a href="mailto:democratsempowermedina@gmail.com">democratsempowermedina@gmail.com</a> or <a href="https://empowermedina.com" target="_blank" rel="noopener">empowermedina.com</a>.</p>' +
