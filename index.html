@@ -329,7 +329,7 @@ body.dark .about-body a{color:#6fc9e8}
   </div>
   <div class="h-right">
     <button class="iconbtn" id="themeBtn" aria-label="Toggle theme">◐</button>
-    <span class="badge" id="verBadge">EM 1.3</span>
+    <span class="badge" id="verBadge">EM 1.3.1</span>
   </div>
 </header>
 
@@ -530,7 +530,7 @@ body.dark .about-body a{color:#6fc9e8}
 <script>
 'use strict';
 /* ============ Empower Compass (Democrats Empower Medina fork) · EM 1.1 · Aug 30 2026 ============ */
-var VERSION = 'EM 1.3 · Sep 14';
+var VERSION = 'EM 1.3.1 · Sep 14';
 var DATA_VERIFIED = 'September 13, 2026';
 
 /* ---------- guarded storage ---------- */
@@ -2084,8 +2084,10 @@ $('helpBtn').onclick = function(){
 };
 
 /* ---------- report a problem ---------- */
-$('bugBtn').onclick = function(){
+function openBugEmail(){
   var body = 'What happened?\n\n\n\nWhat were you doing right before?\n\n\n\n' +
+    'Did you attach a screenshot? It helps a lot \u2014 a picture of the screen where the problem happened often solves it fast.\n' +
+    '(Tap the paperclip or photo icon in your email to add it.)\n\n' +
     '--- (leave this part, it helps) ---\n' +
     'App: Empower Compass ' + VERSION + '\n' +
     'Device: ' + (navigator.userAgent || '') + '\n' +
@@ -2094,6 +2096,21 @@ $('bugBtn').onclick = function(){
     '?subject=' + encodeURIComponent(PROJECT_TAG + ' something broke \u2014 ' + VERSION) +
     '&body=' + encodeURIComponent(body);
   window.location.href = href;
+}
+$('bugBtn').onclick = function(){
+  openModal(
+    '<h3>Report a problem</h3>' +
+    '<div class="about-body">' +
+    '<p><b>First, a screenshot helps a lot.</b> If you can, take a picture of the screen where the problem is happening before you continue.</p>' +
+    '<p style="color:var(--muted);font-size:14px">On most phones: press the power and volume-down buttons at the same time. You\u2019ll attach it to the email on the next step.</p>' +
+    '<p>Next, tap the button below. Your email app will open with a few questions already filled in \u2014 answer them, attach your screenshot, and send.</p>' +
+    '</div>' +
+    '<div class="modal-row">' +
+    '<button class="abtn ghost" id="bug-cancel">Cancel</button>' +
+    '<button class="abtn mail" id="bug-go">Open email &amp; report</button></div>'
+  );
+  $('bug-cancel').onclick = closeModal;
+  $('bug-go').onclick = function(){ closeModal(); openBugEmail(); };
 };
 
 /* ---------- about ---------- */
