@@ -1,5 +1,5 @@
 /* Empower Compass service worker — CACHE name must match the app version badge */
-var CACHE = 'empower-compass-em1.4';
+var CACHE = 'empower-compass-em1.5';
 var PRECACHE = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', function(e){

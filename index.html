@@ -89,6 +89,7 @@ h2:first-child{margin-top:2px}
 .daterow .chip.past{background:var(--line);color:var(--muted)}
 .daterow .dt-t{font-size:16px;font-weight:bold}
 .daterow .dt-s{font-size:13px;color:var(--muted);margin-top:2px;font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif}
+.daterow .grow{flex:1;min-width:0}
 .verify{
   font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:12px;color:var(--muted);
   text-align:center;margin:14px 0 4px;line-height:1.6
@@ -329,7 +330,7 @@ body.dark .about-body a{color:#6fc9e8}
   </div>
   <div class="h-right">
     <button class="iconbtn" id="themeBtn" aria-label="Toggle theme">◐</button>
-    <span class="badge" id="verBadge">EM 1.4</span>
+    <span class="badge" id="verBadge">EM 1.5</span>
   </div>
 </header>
 
@@ -352,6 +353,7 @@ body.dark .about-body a{color:#6fc9e8}
     </div>
     <div id="planSlot"></div>
     <h2>Key dates · Nov 2026 General</h2>
+    <button class="addbtn" id="addAllDatesBtn" style="border-color:var(--gold);color:var(--ink);font-size:14px;margin-bottom:12px">\uD83D\uDCC5 Add all key dates to my calendar</button>
     <div id="dateList"></div>
     <div class="verify" id="verifyLine"></div>
     <h2>Voter toolbox</h2>
@@ -530,7 +532,7 @@ body.dark .about-body a{color:#6fc9e8}
 <script>
 'use strict';
 /* ============ Empower Compass (Democrats Empower Medina fork) · EM 1.1 · Aug 30 2026 ============ */
-var VERSION = 'EM 1.4 · Sep 14';
+var VERSION = 'EM 1.5 · Sep 14';
 var DATA_VERIFIED = 'September 14, 2026';
 
 /* ---------- guarded storage ---------- */
@@ -568,11 +570,11 @@ var K_REPS='em_v1_reps', K_EVENTS='em_v1_events', K_PREFS='em_v1_prefs',
 
 /* ---------- key dates (verified against Ohio SOS-sourced info, Jul 21 2026) ---------- */
 var KEY_DATES = [
-  {t:'Voter registration deadline', s:'Register or update your address by 9 PM · VoteOhio.gov', d:'2026-10-05'},
-  {t:'Early in-person voting begins', s:'Medina County Board of Elections, Medina', d:'2026-10-06'},
-  {t:'Absentee ballot request deadline', s:'Application must reach the Board of Elections by 8:30 PM', d:'2026-10-27'},
-  {t:'Last day of early voting', s:'Early in-person voting ends at 2 PM', d:'2026-11-02'},
-  {t:'Election Day', s:'Polls open 6:30 AM – 7:30 PM statewide. Mail ballots must be RECEIVED by 7:30 PM.', d:'2026-11-03'}
+  {id:'kd-reg', t:'Voter registration deadline', s:'Register or update your address by 9 PM · VoteOhio.gov', d:'2026-10-05', time:'21:00'},
+  {id:'kd-early', t:'Early in-person voting begins', s:'Medina County Board of Elections, Medina', d:'2026-10-06', allDay:true},
+  {id:'kd-abs', t:'Absentee ballot request deadline', s:'Application must reach the Board of Elections by 8:30 PM', d:'2026-10-27', time:'20:30'},
+  {id:'kd-lastearly', t:'Last day of early voting', s:'Early in-person voting ends at 2 PM', d:'2026-11-02', time:'14:00'},
+  {id:'kd-eday', t:'Election Day', s:'Polls open 6:30 AM – 7:30 PM statewide. Mail ballots must be RECEIVED by 7:30 PM.', d:'2026-11-03', allDay:true}
 ];
 var ELECTION_DAY = '2026-11-03';
 
@@ -803,6 +805,12 @@ $('verBadge').onclick = function(){ toast('Empower Compass ' + VERSION); };
 var APP_URL = 'https://motbuchanan.github.io/empower-compass/';
 var SUPPORT_EMAIL = 'motbuchanan.builds@gmail.com';
 var PROJECT_TAG = '[EMPOWER-COMPASS]';
+$('addAllDatesBtn').onclick = function(){
+  var upcoming = KEY_DATES.filter(function(kd){ return daysUntil(kd.d) >= 0; });
+  if(!upcoming.length){ toast('All key dates have passed'); return; }
+  downloadFile('empower-compass-key-dates.ics', 'text/calendar', allKeyDatesICS());
+  toast('Open the downloaded file to add all dates to your calendar');
+};
 $('shareCountBtn').onclick = function(){
   var d = daysUntil(ELECTION_DAY);
   var txt;
@@ -868,11 +876,22 @@ function renderDates(){
     }
     else if(d === 0) chip = '<div class="chip"><b>NOW</b><span>today</span></div>';
     else chip = '<div class="chip past"><b>✓</b><span>done</span></div>';
+    var calBtn = (daysUntil(kd.d) >= 0)
+      ? '<button class="editpen" data-kdcal="' + esc(kd.id) + '" aria-label="Add to calendar" style="font-size:20px">\uD83D\uDCC5</button>'
+      : '';
     html += '<div class="card daterow">' + chip +
-      '<div><div class="dt-t">' + esc(kd.t) + '</div>' +
-      '<div class="dt-s">' + esc(niceDate(kd.d)) + ' · ' + esc(kd.s) + '</div></div></div>';
+      '<div class="grow"><div class="dt-t">' + esc(kd.t) + '</div>' +
+      '<div class="dt-s">' + esc(niceDate(kd.d)) + ' · ' + esc(kd.s) + '</div></div>' + calBtn + '</div>';
   });
   $('dateList').innerHTML = html;
+  document.querySelectorAll('[data-kdcal]').forEach(function(b){
+    b.onclick = function(){
+      var kd = KEY_DATES.filter(function(x){ return x.id === b.getAttribute('data-kdcal'); })[0];
+      if(!kd) return;
+      downloadFile((kd.id||'date') + '.ics', 'text/calendar', keyDateICS(kd));
+      toast('Open the downloaded file to add it to your calendar');
+    };
+  });
 
   var stale = daysUntil(ELECTION_DAY) < 0;
   $('verifyLine').innerHTML =
@@ -1067,6 +1086,45 @@ function buildICS(ev){
   if(ev.notes) lines.push('DESCRIPTION:' + icsEsc(ev.notes));
   lines.push('END:VEVENT', 'END:VCALENDAR');
   return lines.join('\r\n');
+}
+function kdVevent(kd){
+  var p = kd.d.split('-'); var y=p[0], mo=p[1], da=p[2];
+  var lines = ['BEGIN:VEVENT', 'UID:' + kd.id + '@empower-compass'];
+  var now = new Date();
+  lines.push('DTSTAMP:' + now.getUTCFullYear() + pad2(now.getUTCMonth()+1) + pad2(now.getUTCDate()) +
+    'T' + pad2(now.getUTCHours()) + pad2(now.getUTCMinutes()) + '00Z');
+  if(kd.allDay){
+    lines.push('DTSTART;VALUE=DATE:' + y+mo+da);
+    var nd = new Date(+y, +mo-1, +da+1);
+    lines.push('DTEND;VALUE=DATE:' + nd.getFullYear() + pad2(nd.getMonth()+1) + pad2(nd.getDate()));
+  } else {
+    var hm = kd.time.split(':');
+    lines.push('DTSTART:' + y+mo+da + 'T' + pad2(+hm[0]) + pad2(+hm[1]) + '00');
+    var end = new Date(+y, +mo-1, +da, +hm[0], +hm[1]+30);
+    lines.push('DTEND:' + end.getFullYear() + pad2(end.getMonth()+1) + pad2(end.getDate()) +
+      'T' + pad2(end.getHours()) + pad2(end.getMinutes()) + '00');
+  }
+  lines.push('SUMMARY:' + icsEsc(kd.t));
+  lines.push('DESCRIPTION:' + icsEsc(kd.s));
+  // Reminder: all-day gets a 1-day-before 9am nudge; timed gets 1 day + 2 hours before
+  if(kd.allDay){
+    lines.push('BEGIN:VALARM','TRIGGER:-P1D','ACTION:DISPLAY','DESCRIPTION:' + icsEsc(kd.t + ' is tomorrow'),'END:VALARM');
+  } else {
+    lines.push('BEGIN:VALARM','TRIGGER:-P1D','ACTION:DISPLAY','DESCRIPTION:' + icsEsc(kd.t + ' is tomorrow'),'END:VALARM');
+    lines.push('BEGIN:VALARM','TRIGGER:-PT2H','ACTION:DISPLAY','DESCRIPTION:' + icsEsc(kd.t + ' is in 2 hours'),'END:VALARM');
+  }
+  lines.push('END:VEVENT');
+  return lines;
+}
+function keyDateICS(kd){
+  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Empower Compass//EN']
+    .concat(kdVevent(kd)).concat(['END:VCALENDAR']).join('\r\n');
+}
+function allKeyDatesICS(){
+  var out = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Empower Compass//EN'];
+  KEY_DATES.forEach(function(kd){ if(daysUntil(kd.d) >= 0){ out = out.concat(kdVevent(kd)); } });
+  out.push('END:VCALENDAR');
+  return out.join('\r\n');
 }
 function downloadFile(name, mime, text){
   try{
