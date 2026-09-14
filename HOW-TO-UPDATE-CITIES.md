@@ -36,7 +36,9 @@ next election, and confirm officials in `CITIES` and `SHARED_SECTIONS`.
 
 ## Reporting problems
 Users can tap More → "Found a problem?" which opens a pre-filled email to
-democratsempowermedina@gmail.com with the app version and device info.
+motbuchanan.builds@gmail.com (Mot's support inbox) tagged [EMPOWER-COMPASS],
+with the app version and device info. Mot triages and fixes bugs; the org is
+not in that loop.
 
 ## Who maintains what
 - **Your team** owns the content: officials, links, scripts, dates.

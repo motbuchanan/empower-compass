@@ -329,7 +329,7 @@ body.dark .about-body a{color:#6fc9e8}
   </div>
   <div class="h-right">
     <button class="iconbtn" id="themeBtn" aria-label="Toggle theme">◐</button>
-    <span class="badge" id="verBadge">EM 1.2</span>
+    <span class="badge" id="verBadge">EM 1.3</span>
   </div>
 </header>
 
@@ -426,6 +426,7 @@ body.dark .about-body a{color:#6fc9e8}
       <div class="rep-actions"><button class="abtn ghost" id="shareYearBtn">↗ Share my year</button></div>
     </div>
     <button class="addbtn" id="sessStart" style="border-color:var(--gold);color:var(--ink);font-size:15px">🚪 Start a canvass session</button>
+    <div id="sessHistWrap"></div>
     <h2>Scripts &amp; talking points</h2>
     <div id="scriptList"></div>
     <button class="addbtn" id="addScriptBtn">＋ New script</button>
@@ -445,11 +446,15 @@ body.dark .about-body a{color:#6fc9e8}
         <button class="abtn ghost" id="nameBtn">Edit</button>
       </div>
       <div class="set-row">
+        <div>Help &amp; FAQ<div class="sub">How everything works, tab by tab</div></div>
+        <button class="abtn ghost" id="helpBtn">Open</button>
+      </div>
+      <div class="set-row">
         <div>How to install<div class="sub">Put this app on your home screen</div></div>
         <button class="abtn ghost" id="howInstallBtn">Show</button>
       </div>
       <div class="set-row">
-        <div>Found a problem?<div class="sub">This app is still growing — tell us what broke</div></div>
+        <div>Found a problem?<div class="sub">Checked the FAQ first? Then tell us what broke</div></div>
         <button class="abtn ghost" id="bugBtn">Report</button>
       </div>
       <div class="set-row">
@@ -525,7 +530,7 @@ body.dark .about-body a{color:#6fc9e8}
 <script>
 'use strict';
 /* ============ Empower Compass (Democrats Empower Medina fork) · EM 1.1 · Aug 30 2026 ============ */
-var VERSION = 'EM 1.2 · Sep 13';
+var VERSION = 'EM 1.3 · Sep 14';
 var DATA_VERIFIED = 'September 13, 2026';
 
 /* ---------- guarded storage ---------- */
@@ -559,7 +564,7 @@ function animateCount(el, target, ms){
 
 var K_REPS='em_v1_reps', K_EVENTS='em_v1_events', K_PREFS='em_v1_prefs',
     K_LOG='em_v1_log', K_TYPES='em_v1_logtypes', K_PLAN='em_v1_plan',
-    K_SCRIPTS='em_v1_scripts', K_SESS='em_v1_sessions', K_SESS_A='em_v1_sess_active', K_CITY='em_v1_city';
+    K_SCRIPTS='em_v1_scripts', K_SESS='em_v1_sessions', K_SESS_A='em_v1_sess_active', K_CITY='em_v1_city', K_REPORT='em_v1_reportto';
 
 /* ---------- key dates (verified against Ohio SOS-sourced info, Jul 21 2026) ---------- */
 var KEY_DATES = [
@@ -796,6 +801,8 @@ function renderGreet(){
 }
 $('verBadge').onclick = function(){ toast('Empower Compass ' + VERSION); };
 var APP_URL = 'https://motbuchanan.github.io/empower-compass/';
+var SUPPORT_EMAIL = 'motbuchanan.builds@gmail.com';
+var PROJECT_TAG = '[EMPOWER-COMPASS]';
 $('shareCountBtn').onclick = function(){
   var d = daysUntil(ELECTION_DAY);
   var txt;
@@ -1225,6 +1232,44 @@ function updateLogNumbers(){
   var fg = $('ringFg');
   if(fg) fg.style.strokeDashoffset = (C * (1 - pct)).toFixed(1);
 }
+function renderSessions(){
+  var wrap = $('sessHistWrap');
+  if(!wrap) return;
+  if(!sessions.length){ wrap.innerHTML = ''; return; }
+  var sorted = sessions.slice().sort(function(a,b){ return b.end - a.end; });
+  var html = '<h2>Canvass sessions</h2>';
+  sorted.forEach(function(s){
+    var when = new Date(s.end).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    var parts = [];
+    SESS_COUNTERS.forEach(function(c){ var n=s.counts[c.k]||0; if(n) parts.push(n+' '+c.l.toLowerCase()); });
+    html += '<div class="card">' +
+      '<div class="rep-head"><div class="grow">' +
+      '<div class="rep-name" style="font-size:16px">' + esc(s.loc || 'Canvass') + '</div>' +
+      '<div class="rep-office">' + esc(when) + ' \u00b7 ' + esc(fmtDur(s.end - s.start)) + '</div>' +
+      '</div></div>' +
+      (parts.length ? '<div class="plan-line" style="margin-top:6px">' + esc(parts.join(' \u00b7 ')) + '</div>' : '') +
+      '<div class="rep-actions">' +
+      '<button class="abtn ghost" data-ssend="' + s.id + '">\u2197 Report</button>' +
+      '<button class="abtn ghost" data-sdel="' + s.id + '">Delete</button>' +
+      '</div></div>';
+  });
+  html += '<button class="addbtn" id="sessExport">\u2913 Copy all sessions</button>';
+  wrap.innerHTML = html;
+  document.querySelectorAll('[data-ssend]').forEach(function(b){
+    b.onclick = function(){ var s=sessions.filter(function(x){return x.id===b.getAttribute('data-ssend')})[0]; if(s) openReportSheet(s); };
+  });
+  document.querySelectorAll('[data-sdel]').forEach(function(b){
+    b.onclick = function(){
+      if(!confirm('Delete this session from your history? (Your action totals stay.)')) return;
+      sessions = sessions.filter(function(x){return x.id!==b.getAttribute('data-sdel')});
+      jSet(K_SESS, sessions); renderSessions();
+    };
+  });
+  var ex=$('sessExport'); if(ex) ex.onclick = function(){
+    var all = sessions.slice().sort(function(a,b){return a.end-b.end}).map(function(s){return sessSummaryText(s);}).join('\n');
+    shareText('My canvass sessions:\n' + all);
+  };
+}
 function renderHistory(){
   var hist = log.slice().sort(function(a,b){ return b.ts - a.ts; });
   var shown = hist.slice(0, 40);
@@ -1241,7 +1286,7 @@ function renderHistory(){
   document.querySelectorAll('[data-delh]').forEach(function(b){
     b.onclick = function(){
       log = log.filter(function(en){ return en.id !== b.getAttribute('data-delh'); });
-      jSet(K_LOG, log); updateLogNumbers(); renderHistory();
+      jSet(K_LOG, log); updateLogNumbers(); renderHistory(); renderSessions();
     };
   });
 }
@@ -1299,6 +1344,7 @@ function renderLog(){
   });
   updateLogNumbers();
   renderHistory();
+  renderSessions();
 }
 $('shareMonthBtn').onclick = function(){ shareText(monthSummaryText()); };
 $('shareYearBtn').onclick = function(){ shareText(tallyText(yearEntries(), '' + new Date().getFullYear())); };
@@ -1760,6 +1806,7 @@ var SESS_COUNTERS = [
   {k:'nothome', e:'🏠', l:'Not home'}
 ];
 var sessions = jGet(K_SESS, []);
+var reportTo = jGet(K_REPORT, null);
 var sessActive = jGet(K_SESS_A, null);
 if(sessActive && (typeof sessActive.counts !== 'object' || sessActive.counts === null || Array.isArray(sessActive.counts))){
   sessActive.counts = {};
@@ -1853,7 +1900,7 @@ function sessSummaryText(rec){
   return bits.join(' — ');
 }
 $('sessEnd').onclick = function(){
-  // hard-safety: if state is broken, force-exit rather than trap the user
+  // hard-safety: broken state force-exits rather than trapping the user
   if(!sessActive || typeof sessActive.counts !== 'object' || !sessActive.counts){
     sessActive = null;
     try{ localStorage.removeItem(K_SESS_A); }catch(e){}
@@ -1864,11 +1911,8 @@ $('sessEnd').onclick = function(){
     toast('Session ended');
     return;
   }
-  if(!sessActive){ $('sessBg').classList.remove('show'); closeModal(); return; }
-  if(!sessActive.counts) sessActive.counts = {};
   var total = 0;
   SESS_COUNTERS.forEach(function(c){ total += (sessActive.counts[c.k] || 0); });
-  // Nothing logged? Just exit — no summary sheet to get lost on.
   if(!total){
     sessActive = null;
     try{ localStorage.removeItem(K_SESS_A); }catch(e){}
@@ -1880,15 +1924,6 @@ $('sessEnd').onclick = function(){
     return;
   }
   var rec = {id:'sx' + Date.now(), start:sessActive.start, end:Date.now(), loc:sessActive.loc, counts:sessActive.counts};
-  openModal(
-    '<h3>Session summary</h3>' +
-    '<div class="reader" style="font-size:16px">' + esc(sessSummaryText(rec)) + '</div>' +
-    '<div class="modal-row">' +
-    '<button class="abtn ghost" id="se-back">Keep going</button>' +
-    '<button class="abtn mail" id="se-save">' + (total ? 'Save session' : 'Discard') + '</button></div>' +
-    (total ? '<button class="del-link" id="se-discard">Discard without saving</button>' : '')
-  );
-  $('se-back').onclick = closeModal;
   function shutdown(){
     sessActive = null;
     try{ localStorage.removeItem(K_SESS_A); }catch(e){}
@@ -1897,39 +1932,155 @@ $('sessEnd').onclick = function(){
     $('sessBg').classList.remove('show');
     closeModal();
   }
+  // STEP 1: review + save
+  openModal(
+    '<h3>Nice work! Here\u2019s your session</h3>' +
+    '<div class="reader" style="font-size:16px">' + esc(sessSummaryText(rec)) + '</div>' +
+    '<div class="verify" style="text-align:left;margin-top:10px">Save it to your history, then you can send your totals to whoever you report to.</div>' +
+    '<div class="modal-row">' +
+    '<button class="abtn ghost" id="se-back">Keep going</button>' +
+    '<button class="abtn mail" id="se-save">Save session</button></div>' +
+    '<button class="del-link" id="se-discard">Discard without saving</button>'
+  );
+  $('se-back').onclick = closeModal;
+  $('se-discard').onclick = function(){ if(!confirm('Throw this session away? It won\u2019t be saved.')) return; shutdown(); };
   $('se-save').onclick = function(){
-    if(total){
-      sessions.push(rec);
-      jSet(K_SESS, sessions);
-      var before = cnt(yearEntries());
-      SESS_COUNTERS.forEach(function(c){
-        var n = rec.counts[c.k] || 0;
-        if(n) log.push({id:'a' + Date.now() + c.k, k:c.k, e:c.e, l:c.l, ts:rec.end, n:n});
-      });
-      jSet(K_LOG, log);
-      var after = cnt(yearEntries());
-      updateLogNumbers();
-      renderHistory();
-      var hit = null;
-      for(var i = 0; i < MILESTONES.length; i++){
-        if(MILESTONES[i] > before && MILESTONES[i] <= after) hit = MILESTONES[i];
-      }
-      shutdown();
-      if(hit){ buzz([20, 40, 20]); celebrate(hit); }
-      else {
-        buzz(20);
-        toastAction('Session saved — ' + after + ' actions this year', 'Share it', function(){ shareText(sessSummaryText(rec)); }, 4000);
-      }
-    } else {
-      shutdown();
-    }
+    sessions.push(rec);
+    jSet(K_SESS, sessions);
+    var before = cnt(yearEntries());
+    SESS_COUNTERS.forEach(function(c){
+      var n = rec.counts[c.k] || 0;
+      if(n) log.push({id:'a' + Date.now() + c.k, k:c.k, e:c.e, l:c.l, ts:rec.end, n:n});
+    });
+    jSet(K_LOG, log);
+    var after = cnt(yearEntries());
+    updateLogNumbers();
+    renderHistory();
+    renderSessions();
+    var hit = null;
+    for(var i = 0; i < MILESTONES.length; i++){ if(MILESTONES[i] > before && MILESTONES[i] <= after) hit = MILESTONES[i]; }
+    shutdown();
+    buzz(hit ? [20,40,20] : 20);
+    if(hit) celebrate(hit);
+    // STEP 2: report (guided)
+    openReportSheet(rec, hit);
   };
-  if(total){
-    $('se-discard').onclick = function(){
-      if(!confirm('Throw this session away?')) return;
-      shutdown();
+};
+
+// ---- Guided report sheet: send this session's totals to your contact ----
+function openReportSheet(rec, milestoneHit){
+  var r = reportTo;
+  var hasContact = r && r.name;
+  var body =
+    '<h3>Send your totals?</h3>' +
+    '<div class="reader" style="font-size:16px">' + esc(sessSummaryText(rec)) + '</div>';
+  if(hasContact){
+    body += '<div class="verify" style="text-align:left;margin-top:10px">Reporting to <b>' + esc(r.name) + '</b>' + (r.how ? ' by ' + esc(r.how) : '') + '. Not who you report to? Update it below.</div>' +
+      '<div class="modal-row">' +
+      '<button class="abtn ghost" id="rp-skip">Not now</button>' +
+      '<button class="abtn mail" id="rp-send">Send to ' + esc(r.name.split(' ')[0]) + '</button></div>' +
+      '<button class="del-link" id="rp-edit" style="color:var(--muted)">Change who I report to</button>';
+  } else {
+    body += '<div class="verify" style="text-align:left;margin-top:10px">Who do you report your canvassing to? Set it once and Empower Compass will format your totals for them every time.<br><br><b>Not sure who to report to?</b> That\u2019s up to you \u2014 check with your team, or visit the Democrats Empower Medina site.</div>' +
+      '<div class="modal-row">' +
+      '<button class="abtn ghost" id="rp-skip">Just save it</button>' +
+      '<button class="abtn mail" id="rp-setup">Set up reporting</button></div>' +
+      '<a class="del-link" id="rp-web" href="https://empowermedina.com" target="_blank" rel="noopener" style="color:var(--muted)">Visit empowermedina.com</a>';
+  }
+  openModal(body);
+  $('rp-skip').onclick = closeModal;
+  if(hasContact){
+    $('rp-send').onclick = function(){ sendReport(rec); };
+    $('rp-edit').onclick = function(){ openReportSetup(rec); };
+  } else {
+    $('rp-setup').onclick = function(){ openReportSetup(rec); };
+  }
+}
+
+function openReportSetup(rec){
+  var r = reportTo || {name:'', how:'text', contact:''};
+  function howOpt(v,label){ return '<option value="'+v+'"'+(r.how===v?' selected':'')+'>'+label+'</option>'; }
+  openModal(
+    '<h3>Who do you report to?</h3>' +
+    '<label>Their name or role</label><input id="rt-name" value="' + esc(r.name) + '" placeholder="e.g. Danielle, or \u201Cmy canvass captain\u201D">' +
+    '<label>How do you send it?</label><select id="rt-how">' + howOpt('text','Text message') + howOpt('email','Email') + howOpt('copy','Copy & paste myself') + '</select>' +
+    '<label id="rt-clabel">Their number or email (optional)</label><input id="rt-contact" value="' + esc(r.contact||'') + '" placeholder="Optional \u2014 lets the app open it for you">' +
+    '<div class="verify" style="text-align:left;margin-top:8px">This stays on your phone. It just saves you re-typing it each time.</div>' +
+    '<div class="modal-row"><button class="abtn ghost" id="rt-cancel">Cancel</button><button class="abtn mail" id="rt-save">Save</button></div>'
+  );
+  $('rt-cancel').onclick = function(){ if(rec) openReportSheet(rec); else closeModal(); };
+  $('rt-save').onclick = function(){
+    var name = $('rt-name').value.trim();
+    if(!name){ toast('Add a name or role first'); return; }
+    reportTo = {name:name, how:$('rt-how').value, contact:$('rt-contact').value.trim()};
+    jSet(K_REPORT, reportTo);
+    toast('Saved');
+    if(rec) sendReport(rec); else closeModal();
+  };
+}
+
+function sendReport(rec){
+  var r = reportTo; if(!r){ openReportSetup(rec); return; }
+  var text = sessSummaryText(rec);
+  closeModal();
+  if(r.how === 'email'){
+    // NOTE: the address in the mailto: target must NOT be percent-encoded
+    var addr = (r.contact||'').trim();
+    var href = 'mailto:' + addr + '?subject=' + encodeURIComponent('Canvass report') + '&body=' + encodeURIComponent(text);
+    window.location.href = href;
+  } else if(r.how === 'text'){
+    // strip non-dialable chars from the number; body IS encoded, target is not
+    var num = (r.contact||'').replace(/[^0-9+]/g,'');
+    var sms = 'sms:' + num + '?&body=' + encodeURIComponent(text);
+    window.location.href = sms;
+  } else {
+    shareText(text);
+  }
+}
+
+/* ---------- help & FAQ ---------- */
+var FAQ = [
+  {q:'What is Empower Compass?', a:'A free pocket guide for staying involved in Medina County: election dates, who represents you, your events, canvassing tools, and a log of the civic actions you take. Everything lives on your phone.'},
+  {q:'Is my information private?', a:'Yes. Everything you enter stays on your own phone. The app collects nothing and sends nothing anywhere on its own. The only time anything leaves your phone is when YOU tap a Share or Send button.'},
+  {q:'Do I need to install or download anything?', a:'No. It opens right in your web browser from the link. If you want, you can add it to your home screen (see \u201CHow to install\u201D on this screen) and it will behave like a regular app, including working offline.'},
+  {q:'DATES \u2014 what\u2019s here?', a:'The countdown to Election Day, every key deadline (registration, early voting, absentee ballots), and one-tap links to check your registration, find your polling place, and see your sample ballot. Tap \u201CMake your voting plan\u201D to set your own plan.'},
+  {q:'REPS \u2014 how do I find mine?', a:'Pick your city at the top (Brunswick, Medina, or Wadsworth) and the local officials swap in. County, state, and federal reps show for everyone. Tap Call or Website to reach them. Tap the little pencil to edit a card or add your own notes \u2014 your edits stay on your phone.'},
+  {q:'EVENTS \u2014 how do I add one?', a:'Tap \u201CAdd an event.\u201D You can set it to repeat (weekly, monthly, even \u201C1st & 3rd Tuesday\u201D). Tap \u201CAdd to calendar\u201D to drop it into your phone\u2019s real calendar, or Share to send it to others.'},
+  {q:'LOG \u2014 what is it for?', a:'Tap a button each time you make a call, write a postcard, or show up somewhere. It keeps your running totals for the month and year, so you can see your impact add up and share it if you like.'},
+  {q:'CANVASSING \u2014 how does a session work?', a:'On the Log tab, tap \u201CStart a canvass session.\u201D You get big buttons for doors knocked, conversations, lit dropped, and not-homes, plus a timer. Tap as you go \u2014 your phone can stay in your pocket between houses. Made a mistake? Tap the small minus on a counter.'},
+  {q:'How do I finish and save a session?', a:'Tap \u201CEnd session.\u201D You\u2019ll see your totals and can save them to your history. After saving, the app asks if you\u2019d like to send your totals to whoever you report to. An empty session (no taps) just closes.'},
+  {q:'Where do my canvass totals go? Who do I report to?', a:'That\u2019s up to you. Empower Compass saves your sessions on your phone and helps you SEND your totals, but it does not decide who receives them. Check with your team or canvass captain about who to report to. If you\u2019re not sure, visit the Democrats Empower Medina site. You can save your contact once under the report step so it\u2019s ready each time.'},
+  {q:'Can I see my past sessions?', a:'Yes \u2014 saved sessions appear under \u201CCanvass sessions\u201D on the Log tab. You can re-send any one, delete it, or copy your whole record.'},
+  {q:'Will I lose my data if I clear my browser or get a new phone?', a:'Possibly \u2014 because everything is stored on your device. Under More \u2192 Backup, tap \u201CSave a backup\u201D now and then. To move to a new phone, save a backup, open the app there, and use \u201CRestore from backup.\u201D'},
+  {q:'Something looks wrong or broke. What do I do?', a:'If it isn\u2019t answered here, it may be a real bug. Use \u201CFound a problem?\u201D on this screen \u2014 it opens a pre-filled message so it can get fixed quickly. Officials\u2019 info out of date? That\u2019s handled by the team that maintains the app.'},
+  {q:'Who made this?', a:'See \u201CAbout Empower Compass\u201D on this screen.'}
+];
+$('helpBtn').onclick = function(){
+  var toc = FAQ.map(function(f,i){ return '<a class="opt" style="text-align:left" href="#" data-faq="'+i+'">'+esc(f.q)+'</a>'; }).join('');
+  openModal(
+    '<h3>Help &amp; FAQ</h3>' +
+    '<div class="verify" style="text-align:left;margin-bottom:6px">Tap a question to jump to the answer.</div>' +
+    '<div id="faqBody">' + toc + '</div>' +
+    '<div class="modal-row"><button class="abtn mail" id="faq-close">Close</button></div>'
+  );
+  $('faq-close').onclick = closeModal;
+  function wireToc(){
+    document.querySelectorAll('[data-faq]').forEach(function(a){
+      a.onclick = function(e){ e.preventDefault(); showFaq(+a.getAttribute('data-faq')); };
+    });
+  }
+  function showFaq(i){
+    var f = FAQ[i];
+    $('faqBody').innerHTML =
+      '<div class="rep-name" style="font-size:17px;margin-bottom:8px">' + esc(f.q) + '</div>' +
+      '<div class="about-body">' + esc(f.a) + '</div>' +
+      '<button class="abtn ghost" id="faq-back" style="margin-top:16px">\u2190 All questions</button>';
+    $('faq-back').onclick = function(){
+      $('faqBody').innerHTML = FAQ.map(function(f,i){ return '<a class="opt" style="text-align:left" href="#" data-faq="'+i+'">'+esc(f.q)+'</a>'; }).join('');
+      wireToc();
     };
   }
+  wireToc();
 };
 
 /* ---------- report a problem ---------- */
@@ -1939,8 +2090,8 @@ $('bugBtn').onclick = function(){
     'App: Empower Compass ' + VERSION + '\n' +
     'Device: ' + (navigator.userAgent || '') + '\n' +
     'Screen: ' + (window.innerWidth || '?') + 'x' + (window.innerHeight || '?') + '\n';
-  var href = 'mailto:democratsempowermedina@gmail.com' +
-    '?subject=' + encodeURIComponent('Empower Compass \u2014 something broke') +
+  var href = 'mailto:' + SUPPORT_EMAIL +
+    '?subject=' + encodeURIComponent(PROJECT_TAG + ' something broke \u2014 ' + VERSION) +
     '&body=' + encodeURIComponent(body);
   window.location.href = href;
 };
