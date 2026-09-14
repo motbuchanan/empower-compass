@@ -329,7 +329,7 @@ body.dark .about-body a{color:#6fc9e8}
   </div>
   <div class="h-right">
     <button class="iconbtn" id="themeBtn" aria-label="Toggle theme">◐</button>
-    <span class="badge" id="verBadge">EM 1.3.2</span>
+    <span class="badge" id="verBadge">EM 1.4</span>
   </div>
 </header>
 
@@ -530,8 +530,8 @@ body.dark .about-body a{color:#6fc9e8}
 <script>
 'use strict';
 /* ============ Empower Compass (Democrats Empower Medina fork) · EM 1.1 · Aug 30 2026 ============ */
-var VERSION = 'EM 1.3.2 · Sep 14';
-var DATA_VERIFIED = 'September 13, 2026';
+var VERSION = 'EM 1.4 · Sep 14';
+var DATA_VERIFIED = 'September 14, 2026';
 
 /* ---------- guarded storage ---------- */
 var mem = {};
@@ -597,13 +597,13 @@ var CITIES = {
     label: 'Wadsworth',
     web: 'https://www.wadsworthcity.com',
     officials: [
-      {id:'w-mayor', name:'Robin Laubaugh', office:'Mayor', phone:'330-335-1521', email:'', web:'https://www.wadsworthcity.com', notes:''},
-      {id:'w-pres', name:'Daniel Rospert', office:'Council President', phone:'330-335-2759', email:'', web:'https://www.wadsworthcity.com', notes:'Council meets 1st & 3rd Tuesdays. Clerk: 330-335-2759.'},
-      {id:'w-w1', name:'Mike Reese', office:'Council \u00b7 Ward 1', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
-      {id:'w-w2', name:'Jon Yurchiak', office:'Council \u00b7 Ward 2', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
-      {id:'w-w3', name:'Jeanne Hines', office:'Council \u00b7 Ward 3', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
-      {id:'w-w4', name:'Angela May', office:'Council \u00b7 Ward 4', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:''},
-      {id:'w-al', name:'Berger \u00b7 Maxwell \u00b7 Stugmyer', office:'Council \u00b7 At-Large (3 seats)', phone:'', email:'', web:'https://www.wadsworthcity.com', notes:'Zach Berger, Chris Maxwell, Thomas Stugmyer'}
+      {id:'w-mayor', name:'Robin Laubaugh', office:'Mayor', phone:'330-335-1521', email:'rlaubaugh@wadsworthcity.org', web:'https://www.wadsworthcity.com', notes:''},
+      {id:'w-pres', name:'Daniel Rospert', office:'Council President', phone:'330-715-7968', email:'drospert@wadsworthcity.org', web:'https://www.wadsworthcity.com/461/City-Council', notes:'Council meets 1st & 3rd Tuesdays. Clerk: 330-335-2759.'},
+      {id:'w-w1', name:'Mike Reese', office:'Council \u00b7 Ward 1', phone:'330-421-8909', email:'mreese@wadsworthcity.org', web:'https://www.wadsworthcity.com/461/City-Council', notes:''},
+      {id:'w-w2', name:'Jon Yurchiak', office:'Council \u00b7 Ward 2', phone:'614-592-4876', email:'jyurchiak@wadsworthcity.org', web:'https://www.wadsworthcity.com/461/City-Council', notes:''},
+      {id:'w-w3', name:'Jeanne Hines', office:'Council \u00b7 Ward 3', phone:'330-730-4556', email:'jhines@wadsworthcity.org', web:'https://www.wadsworthcity.com/461/City-Council', notes:''},
+      {id:'w-w4', name:'Angela May', office:'Council \u00b7 Ward 4', phone:'330-485-6167', email:'amay@wadsworthcity.org', web:'https://www.wadsworthcity.com/461/City-Council', notes:''},
+      {id:'w-al', name:'At-Large (3 seats)', office:'Council \u00b7 At-Large', phone:'330-606-3824', email:'zberger@wadsworthcity.org', web:'https://www.wadsworthcity.com/461/City-Council', notes:'Zach Berger (zberger@ / 330-606-3824), Chris Maxwell (cmaxwell@ / 330-786-5816), Tom Stugmyer (tstugmyer@ / 330-760-7458). All @wadsworthcity.org.'}
     ]
   },
   brunswick: {
@@ -642,13 +642,13 @@ var SHARED_SECTIONS = [
   ]},
   {sec:'State of Ohio', items:[
     {id:'s-gov', name:'Mike DeWine', office:'Governor (term-limited \u00b7 seat on the Nov ballot)', phone:'', email:'', web:'https://governor.ohio.gov', notes:''},
-    {id:'s-sen22', name:'Mark Romanchuk', office:'State Senator \u00b7 District 22', phone:'', email:'', web:'https://www.ohiosenate.gov', notes:'District 22 covers all of Medina County.'},
-    {id:'s-rep', name:'Sharon Ray', office:'State Representative \u00b7 District 66', phone:'614-466-8140', email:'', web:'https://www.ohiohouse.gov', notes:'Not seeking re-election \u2014 this seat is open on the Nov 2026 ballot. District 66 covers most of Medina County; confirm yours at ohiohouse.gov.'}
+    {id:'s-sen22', name:'Mark Romanchuk', office:'State Senator \u00b7 District 22', phone:'614-466-7505', email:'romanchuk@ohiosenate.gov', web:'https://ohiosenate.gov/members/mark-romanchuk', notes:'District 22 covers all of Medina County.'},
+    {id:'s-rep', name:'Sharon Ray', office:'State Representative \u00b7 District 66', phone:'614-466-8140', email:'rep66@ohiohouse.gov', web:'https://ohiohouse.gov/members/sharon-a-ray', notes:'Not seeking re-election \u2014 this seat is open on the Nov 2026 ballot. District 66 covers most of Medina County; confirm yours at ohiohouse.gov.'}
   ]},
   {sec:'Federal', items:[
-    {id:'f-sen1', name:'Jon Husted', office:'U.S. Senator (seat on the Nov ballot)', phone:'202-224-3121', email:'', web:'https://www.senate.gov', notes:'Capitol switchboard \u2014 ask for the senator\u2019s office.'},
-    {id:'f-sen2', name:'Bernie Moreno', office:'U.S. Senator', phone:'202-224-3121', email:'', web:'https://www.senate.gov', notes:'Capitol switchboard \u2014 ask for the senator\u2019s office.'},
-    {id:'f-rep', name:'Max Miller', office:'U.S. Representative \u00b7 OH-7', phone:'202-224-3121', email:'', web:'https://www.house.gov', notes:'Capitol switchboard \u2014 ask for the representative\u2019s office. Confirm your district at house.gov.'}
+    {id:'f-sen1', name:'Jon Husted', office:'U.S. Senator (seat on the Nov ballot)', phone:'202-224-3353', email:'', web:'https://www.husted.senate.gov', notes:'Use the contact form on his site to email.'},
+    {id:'f-sen2', name:'Bernie Moreno', office:'U.S. Senator', phone:'202-224-2315', email:'', web:'https://www.moreno.senate.gov', notes:'Cleveland office: 216-522-7272. Use the contact form on his site to email.'},
+    {id:'f-rep', name:'Max Miller', office:'U.S. Representative \u00b7 OH-7', phone:'330-661-6654', email:'', web:'https://maxmiller.house.gov', notes:'Medina district office: 330-661-6654 (DC: 202-225-3876). Use the contact form on his site to email.'}
   ]}
 ];
 function deepClone(x){ return JSON.parse(JSON.stringify(x)); }
