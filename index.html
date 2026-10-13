@@ -358,7 +358,7 @@ body.dark .about-body a{color:#6fc9e8}
   </div>
   <div class="h-right">
     <button class="iconbtn" id="themeBtn" aria-label="Toggle theme">◐</button>
-    <span class="badge" id="verBadge">EM 1.7</span>
+    <span class="badge" id="verBadge">EM 1.8</span>
   </div>
 </header>
 
@@ -432,7 +432,7 @@ body.dark .about-body a{color:#6fc9e8}
     </div>
     <div id="planSlot"></div>
     <h2>Key dates · Nov 2026 General</h2>
-    <button class="addbtn" id="addAllDatesBtn" style="border-color:var(--gold);color:var(--ink);font-size:14px;margin-bottom:12px">\uD83D\uDCC5 Add all key dates to my calendar</button>
+    <button class="addbtn" id="addAllDatesBtn" style="border-color:var(--gold);color:var(--ink);font-size:14px;margin-bottom:12px"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" style="vertical-align:-3px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><use href="#i-cal"></use></svg> Add all key dates to my calendar</button>
     <div id="dateList"></div>
     <div class="verify" id="verifyLine"></div>
     <h2>Voter toolbox</h2>
@@ -611,7 +611,7 @@ body.dark .about-body a{color:#6fc9e8}
 <script>
 'use strict';
 /* ============ Empower Compass (Democrats Empower Medina fork) · EM 1.1 · Aug 30 2026 ============ */
-var VERSION = 'EM 1.7 · Oct 13';
+var VERSION = 'EM 1.8 · Oct 13';
 var DATA_VERIFIED = 'September 14, 2026';
 
 /* ---------- guarded storage ---------- */
@@ -956,7 +956,7 @@ function renderDates(){
     else if(d === 0) chip = '<div class="chip"><b>NOW</b><span>today</span></div>';
     else chip = '<div class="chip past"><b>✓</b><span>done</span></div>';
     var calBtn = (daysUntil(kd.d) >= 0)
-      ? '<button class="editpen" data-kdcal="' + esc(kd.id) + '" aria-label="Add to calendar" style="font-size:20px">\uD83D\uDCC5</button>'
+      ? '<button class="editpen" data-kdcal="' + esc(kd.id) + '" aria-label="Add to calendar" style="padding:4px;line-height:0"><svg viewBox=\"0 0 24 24\" width=\"22\" height=\"22\" aria-hidden=\"true\" style=\"display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round\"><use href=\"#i-cal\"></use></svg></button>'
       : '';
     html += '<div class="card daterow">' + chip +
       '<div class="grow"><div class="dt-t">' + esc(kd.t) + '</div>' +
