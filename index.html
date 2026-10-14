@@ -9,6 +9,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Empower Compass · Medina County</title>
+<meta name="build" content="EM 1.10 · Oct 13">
 <style>
 :root{
   --bg:#eef4f7; --card:#ffffff; --ink:#16232b; --muted:#5f7280;
@@ -358,7 +359,7 @@ body.dark .about-body a{color:#6fc9e8}
   </div>
   <div class="h-right">
     <button class="iconbtn" id="themeBtn" aria-label="Toggle theme">◐</button>
-    <span class="badge" id="verBadge">EM 1.9</span>
+    <span class="badge" id="verBadge">EM 1.10</span>
   </div>
 </header>
 
@@ -611,7 +612,7 @@ body.dark .about-body a{color:#6fc9e8}
 <script>
 'use strict';
 /* ============ Empower Compass (Democrats Empower Medina fork) · EM 1.1 · Aug 30 2026 ============ */
-var VERSION = 'EM 1.9 · Oct 13';
+var VERSION = (function(){var m=document.querySelector('meta[name="build"]'); return (m && m.content) || 'EM 1.10';})();
 var DATA_VERIFIED = 'September 14, 2026';
 
 /* ---------- guarded storage ---------- */
@@ -1727,7 +1728,7 @@ function buzz(pattern){
 /* ---------- voting plan ---------- */
 var plan = jGet(K_PLAN, null);
 var PLAN_METHODS = {
-  early:{t:'Early, in person', win:'Oct 6 \u2013 Nov 2 (last day ends 2 PM)'},
+  early:{t:'Early, in person', win:'Oct 6 \u2013 Nov 1 (last day ends 5 PM)'},
   mail:{t:'By mail (absentee)', win:'Request by Oct 27 \u00b7 ballot must be RECEIVED by 7:30 PM Nov 3'},
   eday:{t:'On Election Day', win:'Tue, Nov 3 \u00b7 polls open 6:30 AM \u2013 7:30 PM'}
 };
@@ -1793,7 +1794,7 @@ function renderPlanStep(){
       html = '<h3>When will you go?</h3>' +
         pOpt('The first day \u2014 Tue, Oct 6', 'The first day (Tue, Oct 6)', 'when') +
         pOpt('A weekend in October', 'A weekend in October', 'when') +
-        pOpt('The last week (by Nov 2, 2 PM)', 'The last week (ends Nov 2, 2 PM)', 'when') +
+        pOpt('The last week (by Nov 1, 5 PM)', 'The last week (ends Nov 1, 5 PM)', 'when') +
         '<div class="verify" style="text-align:left;margin-top:10px">Early voting happens at the Medina County Board of Elections.</div>';
     } else if(planDraft.method === 'mail'){
       html = '<h3>When will you send your request?</h3>' +
@@ -2311,6 +2312,26 @@ $('tourAgainBtn').onclick = startTour;
 
 /* ---------- service worker (https only; no-op elsewhere) ---------- */
 try{
+/* ---------- update checker: nudge members when a newer build is live ---------- */
+var _updSeen = '';
+function checkForUpdate(){
+  try{
+    fetch('./index.html?_=' + Date.now(), {cache:'no-store'}).then(function(r){ return r.ok ? r.text() : ''; }).then(function(html){
+      if(!html) return;
+      var m = html.match(/<meta name="build" content="([^"]+)">/);
+      if(!m) return;
+      var latest = m[1];
+      if(latest && latest !== VERSION && latest !== _updSeen){
+        if(sessActive) return; /* never interrupt a canvass session */
+        _updSeen = latest;
+        toastAction('Updated info is ready', 'Refresh', function(){ location.reload(); }, 60000);
+      }
+    }).catch(function(){});
+  }catch(e){}
+}
+setTimeout(checkForUpdate, 3000);
+document.addEventListener('visibilitychange', function(){ if(!document.hidden){ _updSeen=''; checkForUpdate(); } });
+setInterval(checkForUpdate, 300000);
   if('serviceWorker' in navigator && location.protocol === 'https:'){
     navigator.serviceWorker.register('sw.js').catch(function(){});
   }
